@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amber: durable execution for AI agents</title>
+<meta name="description" content="Amber is an open-source, self-hosted durable execution runtime for long-running AI agents. A case study on durable execution, the observability gap, and how we built Amber on DBOS and Postgres.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="amber-deer-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Open Graph / social preview. Base URL: https://amber-runtime.github.io/case-study/ -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Amber: durable execution for AI agents">
+<meta property="og:description" content="An open-source, self-hosted durable execution runtime for long-running AI agents. How we built it on DBOS and Postgres, and how the dashboard pairs durable state with agent traces.">
+<meta property="og:image" content="https://amber-runtime.github.io/case-study/og-card.png">
+<meta property="og:url" content="https://amber-runtime.github.io/case-study/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Amber: durable execution for AI agents">
+<meta name="twitter:description" content="An open-source, self-hosted durable execution runtime for long-running AI agents.">
+<meta name="twitter:image" content="https://amber-runtime.github.io/case-study/og-card.png">
+<style>
+:root{
+  /* aligned to the Amber dashboard: slate-950 base, amber accent */
+  --bg:#020617;          /* slate-950 */
+  --surface:#0f172a;     /* slate-900 */
+  --surface-2:#1e293b;   /* slate-800 */
+  --line:rgba(148,163,184,.14);
+  --line-cool:rgba(148,163,184,.16);
+
+  /* semantic, matching the app status colors */
+  --amber:#f59e0b;       /* amber-500, brand */
+  --amber-lt:#fbbf24;    /* amber-400, links */
+  --amber-300:#fcd34d;   /* amber-300, pill text */
+  --amber-dp:#d97706;    /* amber-600 */
+  --amber-glow:rgba(245,158,11,.22);
+  --amber-bg:rgba(245,158,11,.15);
+  --amber-bd:rgba(245,158,11,.30);
+
+  --emerald:#10b981;     /* SUCCESS */
+  --emerald-300:#6ee7b7;
+  --emerald-bg:rgba(16,185,129,.15);
+  --emerald-bd:rgba(16,185,129,.30);
+
+  --slate:#94a3b8;       /* slate-400 */
+  --slate-dp:#475569;    /* slate-600 */
+  --slate-bg:rgba(148,163,184,.08);
+
+  --red:#f87171;         /* red-400 */
+  --red-300:#fca5a5;
+  --red-dp:#7f1d1d;
+  --red-bg:rgba(239,68,68,.15);
+  --red-bd:rgba(239,68,68,.30);
+
+  /* text */
+  --head:#f8fafc;        /* slate-50 */
+  --body:#cbd5e1;        /* slate-300 */
+  --mute:#94a3b8;        /* slate-400 */
+
+  /* fonts: same system stacks the dashboard uses, no webfonts */
+  --display:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --mono:ui-monospace,'Cascadia Code','Source Code Pro',Menlo,Consolas,'DejaVu Sans Mono',monospace;
+
+  --col:740px;
+  --col-wide:980px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--body);
+  font-family:var(--sans);font-size:18px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  /* faint resin grain / vignette */
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 500px at 75% -10%, rgba(245,158,11,.10), transparent 60%),
+    radial-gradient(700px 500px at -10% 20%, rgba(148,163,184,.06), transparent 60%);
+}
+.wrap{position:relative;z-index:1}
+
+/* ---------- top progress ---------- */
+.progress{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--amber-dp),var(--amber-lt));z-index:50;transition:width .1s linear}
+.minibar{position:sticky;top:0;left:0;right:0;height:54px;z-index:40;
+  display:flex;align-items:center;gap:16px;padding:0 24px;
+  background:var(--surface);border-bottom:1px solid var(--line-cool)}
+.minibar .mark{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:600;color:var(--amber);letter-spacing:-.02em;font-size:20px}
+.deericon{height:28px;width:auto;aspect-ratio:273/483;color:var(--amber);display:block}
+.deericon.lg{height:34px}
+.minibar .crumb{font-family:var(--sans);font-weight:500;font-size:13px;color:var(--slate)}
+.minibar .now{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--mute);letter-spacing:.04em}
+
+/* ---------- build note ---------- */
+.build-note{font-family:var(--mono);font-size:12.5px;color:var(--amber-lt);
+  background:linear-gradient(90deg,rgba(245,158,11,.08),transparent);
+  border-bottom:1px dashed var(--line);padding:9px 20px;text-align:center;letter-spacing:.02em}
+.build-note b{color:var(--head);font-weight:500}
+
+/* ---------- layout ---------- */
+section{padding:74px 20px}
+.col{max-width:var(--col);margin:0 auto}
+.wide{max-width:var(--col-wide);margin:0 auto}
+
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--amber);margin:0 0 18px}
+h1,h2,h3{font-family:var(--display);color:var(--head);line-height:1.12;margin:0 0 .5em;font-weight:700}
+h2{font-size:34px;letter-spacing:-.01em}
+h3{font-size:22px;font-weight:600;letter-spacing:-.005em}
+p{margin:0 0 22px}
+a{color:var(--amber-lt);text-decoration:none;border-bottom:1px solid rgba(251,191,36,.3)}
+a:hover{border-color:var(--amber-lt)}
+.lede{font-size:21px;color:#DAD0C0}
+strong{color:var(--head);font-weight:600}
+
+/* inline styled key term */
+.term{font-family:var(--mono);font-size:.86em;padding:1px 6px;border-radius:5px;
+  background:var(--slate-bg);color:#CBD5E1;border:1px solid var(--line-cool);white-space:nowrap}
+.term.amb{background:rgba(245,158,11,.12);color:var(--amber-lt);border-color:var(--line)}
+
+/* ---------- hero ---------- */
+.hero{padding-top:120px;padding-bottom:30px;text-align:left}
+.hero h1{font-size:clamp(29px,4.6vw,46px);font-weight:600;letter-spacing:-.02em;margin-bottom:22px;color:var(--head)}
+.hero h1 .br{color:var(--amber)}
+.hero .sub{font-size:21px;color:#D9CFBF;max-width:640px}
+.meta{font-family:var(--mono);font-size:13px;color:var(--mute);margin:30px 0 0;
+  display:flex;gap:18px;flex-wrap:wrap;align-items:center}
+.meta .pip{color:var(--amber)}
+
+/* hero ambient motif */
+.hero-motif{margin:48px 0 8px;display:flex;gap:10px;align-items:flex-end;height:90px}
+.motif-step{width:46px;border-radius:7px 7px 4px 4px;position:relative;
+  background:var(--slate-bg);border:1px solid var(--line-cool)}
+.motif-step .fill{position:absolute;inset:0;border-radius:inherit;opacity:0;
+  background:linear-gradient(180deg,rgba(251,191,36,.55),rgba(245,158,11,.18));
+  border:1px solid var(--amber);box-shadow:inset 0 0 16px var(--amber-glow);transition:opacity .5s}
+.motif-step.set .fill{opacity:1}
+.motif-cap{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:14px}
+
+/* covers box */
+.covers{margin:40px 0 0;border:1px solid var(--line);border-radius:14px;padding:24px 26px;background:var(--surface)}
+.covers h3{font-size:14px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--amber);margin-bottom:14px}
+.covers ul{margin:0;padding:0;list-style:none}
+.covers li{padding:7px 0 7px 26px;position:relative;color:var(--body)}
+.covers li::before{content:"▸";position:absolute;left:0;color:var(--amber);font-size:14px;top:8px}
+
+/* ---------- the reused spine ---------- */
+.spine{display:flex;align-items:stretch;gap:0;margin:8px 0 0;
+  border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface)}
+.spine-half{flex:1;padding:22px 22px;transition:opacity .35s, background .35s}
+.spine-half.write{border-right:1px dashed var(--line)}
+.spine-half .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 14px}
+.spine .write .tag{color:var(--slate)}
+.spine .read .tag{color:var(--amber)}
+.spine-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.node{font-family:var(--mono);font-size:12.5px;padding:9px 12px;border-radius:9px;
+  background:var(--surface-2);border:1px solid var(--line-cool);color:#D6CCBC;line-height:1.3}
+.node.db{border-color:var(--line);color:var(--amber-lt);background:rgba(245,158,11,.07)}
+.arrow{color:var(--mute);font-family:var(--mono);font-size:15px}
+.spine-half.dim{opacity:.28}
+.spine-note{font-size:13.5px;color:var(--mute);margin:12px 0 0;font-family:var(--mono)}
+
+/* mini spine reused at section heads */
+.minispine{display:flex;gap:8px;align-items:center;margin:0 0 30px;
+  font-family:var(--mono);font-size:11.5px;flex-wrap:wrap}
+.minispine .seg{padding:6px 11px;border-radius:8px;border:1px solid var(--line-cool);
+  background:var(--surface);color:#9b9282;transition:.3s}
+.minispine .seg.on{color:var(--head);border-color:var(--amber);background:rgba(245,158,11,.10);
+  box-shadow:0 0 0 1px var(--line)}
+.minispine .seg.amb.on{color:var(--amber-lt)}
+.minispine .sep{color:var(--mute)}
+
+/* ---------- generic interactive panel ---------- */
+.panel{border:1px solid var(--line);border-radius:16px;background:var(--surface);
+  padding:26px;margin:30px 0}
+.panel .ptitle{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mute);margin:0 0 18px;display:flex;justify-content:space-between;align-items:center}
+.btn{font-family:var(--mono);font-size:13px;cursor:pointer;color:var(--head);
+  background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:9px 15px;
+  transition:.18s;letter-spacing:.02em}
+.btn:hover{border-color:var(--amber);background:rgba(245,158,11,.10)}
+.btn:focus-visible{outline:2px solid var(--amber-lt);outline-offset:2px}
+.btn.crash{color:var(--red);border-color:var(--red-dp)}
+.btn.crash:hover{background:var(--red-bg);border-color:var(--red)}
+
+/* toggle */
+.seg-toggle{display:inline-flex;border:1px solid var(--line-cool);border-radius:10px;overflow:hidden}
+.seg-toggle button{font-family:var(--mono);font-size:12.5px;border:0;cursor:pointer;
+  padding:9px 14px;background:transparent;color:var(--mute);transition:.2s}
+.seg-toggle button.active{background:var(--slate-bg);color:#E2E8F0}
+.seg-toggle button.active[data-mode="amber"]{background:rgba(245,158,11,.14);color:var(--amber-lt)}
+
+/* ---------- A/B step track ---------- */
+.track{display:flex;gap:9px;margin:6px 0 16px;flex-wrap:wrap}
+.tstep{flex:1;min-width:74px;border-radius:9px;padding:14px 8px 12px;text-align:center;
+  border:1px solid var(--line-cool);background:var(--slate-bg);position:relative;
+  transition:background .35s,border-color .35s,transform .25s,opacity .35s}
+.tstep .n{font-family:var(--mono);font-size:11px;color:var(--mute);display:block;margin-bottom:6px}
+.tstep .lbl{font-size:12.5px;color:#B9B0A0}
+.tstep.running{border-color:var(--slate);background:var(--slate-bg);box-shadow:0 0 0 1px rgba(148,163,184,.25)}
+.tstep.done{border-color:var(--emerald-bd);background:var(--emerald-bg)}
+.tstep.done .n{color:var(--emerald-300)}
+.tstep.preserved{border-color:var(--amber-bd);background:var(--amber-bg)}
+.tstep.preserved .n{color:var(--amber-300)}
+.tstep.preserved::after{content:"🔒";position:absolute;top:6px;right:8px;font-size:11px;opacity:.85}
+.tstep.wasted{border-color:var(--red-bd);background:var(--red-bg)}
+.tstep.wasted .n{color:var(--red-300)}
+.tstep.crashpt{border-color:var(--red);background:var(--red-bg);box-shadow:0 0 0 2px rgba(239,68,68,.3)}
+.ab-readout{font-family:var(--mono);font-size:13px;margin:10px 0 0;color:var(--body);min-height:22px}
+.ab-readout .hi{color:var(--amber-lt)}
+.ab-readout .bad{color:var(--red)}
+
+/* ---------- JOIN reveal ---------- */
+.join-stage{display:flex;flex-direction:column;gap:14px;align-items:stretch}
+.drow{border:1px solid var(--line-cool);border-radius:11px;overflow:hidden;background:var(--surface-2);
+  transition:transform .55s cubic-bezier(.6,0,.2,1),box-shadow .4s,border-color .4s}
+.drow .rhead{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:8px 12px;color:var(--mute);border-bottom:1px solid var(--line-cool);background:rgba(0,0,0,.18)}
+.drow .rhead.slate{color:var(--slate)}
+.drow .rhead.amb{color:var(--amber)}
+.cells{display:flex;flex-wrap:wrap}
+.cell{font-family:var(--mono);font-size:12.5px;padding:11px 13px;border-right:1px solid var(--line-cool);
+  color:#CFC5B5;transition:background .4s,color .4s}
+.cell .k{color:var(--mute);font-size:10.5px;display:block;letter-spacing:.05em}
+.cell.key{background:rgba(245,158,11,.05)}
+.cell.key.lit{background:rgba(245,158,11,.22);color:var(--amber-lt)}
+.cell.key.lit .k{color:var(--amber)}
+.join-op{text-align:center;font-family:var(--mono);font-size:12.5px;color:var(--amber);
+  opacity:0;transition:opacity .4s;height:0}
+.join-op.show{opacity:1;height:auto;margin:2px 0}
+.joined .drow.merge-up{transform:translateY(14px)}
+.drow.merged{border-color:var(--amber);box-shadow:0 0 0 1px var(--line),0 10px 40px -18px var(--amber-glow)}
+
+/* ---------- Gantt ---------- */
+.gantt{position:relative;border:1px solid var(--line-cool);border-radius:12px;background:var(--surface-2);
+  padding:18px 18px 26px;margin-top:4px}
+.glane{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:12px;margin:9px 0}
+.glabel{font-family:var(--mono);font-size:12px;color:var(--body);text-align:right}
+.gtrack{position:relative;height:22px;background:rgba(255,255,255,.03);border-radius:6px}
+.gbar{position:absolute;top:0;height:100%;border-radius:6px;background:#334155;
+  border:1px solid var(--slate-dp);width:0;transition:width .5s ease}
+.gbar.amb{background:rgba(245,158,11,.45);border-color:var(--amber)}
+.gapband{position:absolute;top:-6px;bottom:-6px;background:repeating-linear-gradient(45deg,rgba(245,158,11,.16),rgba(245,158,11,.16) 7px,transparent 7px,transparent 14px);
+  border-left:1px dashed var(--amber);border-right:1px dashed var(--amber);opacity:0;transition:opacity .4s;z-index:2}
+.gapband.show{opacity:1}
+.gapband .gtag{position:absolute;top:-22px;left:50%;transform:translateX(-50%);white-space:nowrap;
+  font-family:var(--mono);font-size:10.5px;color:var(--amber-lt)}
+.crashline{position:absolute;top:0;bottom:26px;width:2px;background:var(--red);opacity:0;transition:opacity .3s;z-index:3}
+.crashline.show{opacity:1}
+.crashline .ctag{position:absolute;top:-4px;left:6px;font-family:var(--mono);font-size:10.5px;color:var(--red);white-space:nowrap}
+.gaxis{font-family:var(--mono);font-size:10.5px;color:var(--mute);grid-column:2;display:flex;justify-content:space-between;margin-top:8px}
+
+/* ---------- aside ---------- */
+.aside{border:1px solid var(--line-cool);border-left:3px solid var(--amber);border-radius:0 12px 12px 0;
+  background:linear-gradient(90deg,rgba(245,158,11,.05),var(--surface));padding:20px 22px;margin:30px 0}
+.aside summary{font-family:var(--display);font-weight:600;color:var(--head);cursor:pointer;font-size:16.5px;list-style:none}
+.aside summary::-webkit-details-marker{display:none}
+.aside summary::before{content:"＋";color:var(--amber);font-family:var(--mono);margin-right:10px;font-weight:400}
+.aside[open] summary::before{content:"－"}
+.aside .abody{margin-top:14px;font-size:16px;color:var(--body)}
+.aside .abody p:last-child{margin-bottom:0}
+
+/* ---------- code ---------- */
+.code{border:1px solid var(--line-cool);border-radius:12px;overflow:hidden;margin:26px 0;background:var(--surface)}
+.code .chead{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;
+  border-bottom:1px solid var(--line-cool);font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.05em}
+.code pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.65;color:var(--body)}
+.tok-kw{color:#C4B5FD}.tok-str{color:#86EFAC}.tok-fn{color:var(--amber-lt)}
+.tok-com{color:#6b6354;font-style:italic}.tok-num{color:#7DD3FC}.tok-op{color:var(--slate)}
+.cap{font-family:var(--mono);font-size:12.5px;color:var(--mute);margin:-12px 0 26px;text-align:center}
+
+/* ---------- placeholder ---------- */
+.ph{border:1.5px dashed var(--line);border-radius:14px;padding:30px 24px;text-align:center;
+  background:repeating-linear-gradient(45deg,rgba(245,158,11,.03),rgba(245,158,11,.03) 12px,transparent 12px,transparent 24px);
+  margin:30px 0}
+.ph .ptag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
+.ph .pwhat{color:#D9CFBF;font-size:15.5px;max-width:480px;margin:0 auto}
+.ph .phint{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:12px}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- footer ---------- */
+footer{padding:60px 20px 90px;border-top:1px solid var(--line);margin-top:40px}
+.f-cta{border:1px solid var(--line);border-radius:16px;padding:30px;background:var(--surface);text-align:center}
+.f-cta .deer{font-size:34px}
+.f-cta h3{margin:8px 0 6px}
+.repo{font-family:var(--mono);font-size:13px}
+
+@media (max-width:680px){
+  body{font-size:16.5px}
+  h2{font-size:27px}
+  .spine{flex-direction:column}
+  .spine-half.write{border-right:0;border-bottom:1px dashed var(--line)}
+  .glane{grid-template-columns:84px 1fr}
+  section{padding:54px 16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<header class="minibar" id="minibar">
+  <span class="mark"><svg class="deericon" aria-hidden="true"><use href="#deermark" xlink:href="#deermark"/></svg>Amber</span>
+  <span class="crumb">Case study</span>
+  <span class="now" id="nowsec">what is durable execution</span>
+</header>
+
+<div class="wrap">
+<svg width="0" height="0" aria-hidden="true" style="position:absolute" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol id="deermark" viewBox="0 0 273 483"><path fill="currentColor" fill-rule="evenodd" d="M234.0 8.0L230.0 9.0L230.0 15.0L233.0 18.0L233.0 21.0L236.0 24.0L236.0 30.0L239.0 33.0L239.0 42.0L242.0 45.0L242.0 57.0L245.0 60.0L245.0 78.0L248.0 81.0L248.0 96.0L245.0 99.0L245.0 114.0L242.0 117.0L242.0 129.0L240.0 131.0L237.0 131.0L232.0 126.0L232.0 120.0L226.0 114.0L226.0 111.0L223.0 108.0L223.0 105.0L217.0 99.0L217.0 96.0L210.0 89.0L204.0 89.0L203.0 93.0L206.0 96.0L206.0 102.0L209.0 105.0L209.0 108.0L215.0 117.0L215.0 126.0L218.0 129.0L218.0 165.0L212.0 174.0L212.0 180.0L206.0 186.0L206.0 189.0L200.0 195.0L200.0 198.0L186.0 212.0L183.0 212.0L168.0 227.0L165.0 227.0L156.0 236.0L150.0 236.0L147.0 239.0L141.0 239.0L138.0 242.0L132.0 242.0L129.0 239.0L123.0 239.0L117.0 233.0L114.0 233.0L108.0 227.0L105.0 227.0L102.0 224.0L99.0 224.0L70.0 195.0L70.0 192.0L64.0 186.0L64.0 183.0L61.0 180.0L61.0 177.0L55.0 168.0L55.0 123.0L61.0 114.0L61.0 105.0L67.0 96.0L66.0 89.0L63.0 89.0L50.0 102.0L50.0 105.0L44.0 111.0L44.0 117.0L41.0 120.0L41.0 123.0L38.0 126.0L38.0 129.0L36.0 131.0L33.0 131.0L31.0 129.0L31.0 123.0L28.0 120.0L28.0 111.0L25.0 108.0L25.0 69.0L28.0 66.0L28.0 54.0L31.0 51.0L31.0 39.0L37.0 30.0L37.0 21.0L40.0 18.0L40.0 15.0L36.0 11.0L29.0 18.0L29.0 21.0L26.0 24.0L26.0 27.0L20.0 33.0L20.0 39.0L14.0 48.0L14.0 57.0L11.0 60.0L11.0 66.0L8.0 69.0L8.0 123.0L11.0 126.0L11.0 132.0L14.0 135.0L14.0 144.0L20.0 153.0L20.0 159.0L23.0 162.0L23.0 165.0L26.0 168.0L26.0 171.0L35.0 180.0L35.0 183.0L41.0 189.0L41.0 192.0L72.0 223.0L75.0 223.0L93.0 241.0L96.0 241.0L110.0 255.0L105.0 260.0L102.0 260.0L90.0 248.0L87.0 248.0L84.0 245.0L81.0 245.0L72.0 239.0L66.0 239.0L63.0 236.0L54.0 236.0L51.0 233.0L45.0 233.0L38.0 240.0L41.0 243.0L41.0 246.0L44.0 249.0L44.0 252.0L63.0 271.0L66.0 271.0L75.0 277.0L81.0 277.0L84.0 280.0L90.0 280.0L98.0 288.0L98.0 294.0L92.0 300.0L92.0 303.0L89.0 306.0L89.0 312.0L86.0 315.0L86.0 318.0L83.0 321.0L83.0 324.0L80.0 327.0L80.0 330.0L74.0 339.0L74.0 348.0L68.0 354.0L68.0 363.0L65.0 366.0L65.0 378.0L62.0 381.0L62.0 396.0L65.0 399.0L65.0 408.0L68.0 411.0L68.0 417.0L71.0 420.0L71.0 423.0L74.0 426.0L74.0 429.0L77.0 432.0L77.0 435.0L80.0 438.0L80.0 441.0L89.0 450.0L89.0 453.0L111.0 475.0L117.0 475.0L123.0 469.0L126.0 469.0L138.0 457.0L141.0 457.0L147.0 451.0L150.0 451.0L162.0 439.0L165.0 439.0L171.0 433.0L174.0 433.0L187.0 420.0L187.0 417.0L183.0 413.0L180.0 413.0L171.0 404.0L168.0 404.0L157.0 393.0L157.0 390.0L151.0 384.0L151.0 378.0L148.0 375.0L148.0 369.0L145.0 366.0L145.0 363.0L148.0 360.0L148.0 351.0L151.0 348.0L151.0 345.0L159.0 337.0L162.0 337.0L165.0 334.0L171.0 334.0L174.0 331.0L219.0 331.0L222.0 328.0L225.0 328.0L232.0 321.0L232.0 312.0L228.0 308.0L225.0 308.0L202.0 285.0L202.0 282.0L189.0 269.0L186.0 269.0L180.0 263.0L177.0 263.0L166.0 252.0L183.0 235.0L186.0 235.0L198.0 223.0L201.0 223.0L223.0 201.0L223.0 198.0L235.0 186.0L235.0 183.0L244.0 174.0L244.0 171.0L247.0 168.0L247.0 165.0L250.0 162.0L250.0 159.0L256.0 150.0L256.0 144.0L259.0 141.0L259.0 129.0L262.0 126.0L262.0 114.0L265.0 111.0L265.0 78.0L262.0 75.0L262.0 63.0L259.0 60.0L259.0 51.0L253.0 42.0L253.0 36.0L250.0 33.0L250.0 30.0L247.0 27.0L247.0 24.0L241.0 18.0L241.0 15.0ZM154.0 285.0L159.0 280.0L162.0 283.0L165.0 283.0L168.0 286.0L171.0 286.0L173.0 288.0L173.0 291.0L171.0 293.0L165.0 293.0L162.0 290.0L159.0 290.0Z"/></symbol></svg>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="col">
+      <p class="eyebrow">Introduction</p>
+      <h1><span class="br">Amber</span> is an open-source, self-hosted durable execution runtime for long-running AI agents.</h1>
+      <p class="sub">This runtime lets an agent resume precisely from any completed step when failures occur in production.</p>
+
+      <div class="hero-motif" id="motif" aria-hidden="true">
+        <div class="motif-step" style="height:48px"><span class="fill"></span></div>
+        <div class="motif-step" style="height:66px"><span class="fill"></span></div>
+        <div class="motif-step" style="height:82px"><span class="fill"></span></div>
+        <div class="motif-step" style="height:58px"><span class="fill"></span></div>
+        <div class="motif-step" style="height:74px"><span class="fill"></span></div>
+      </div>
+
+      <p class="meta"><span class="pip">●</span> open source &nbsp; <span class="pip">●</span> self-hosted &nbsp; <span class="pip">●</span> DBOS + Postgres &nbsp; <span class="pip">●</span> OpenAI Agents SDK</p>
+
+      <p class="rv">Durable execution is an approach to executing code in a crash-proof way. It's about ensuring an application can run from start to finish and recover from any failures without starting over. Without a durable execution runtime, developers often have to hand-write and maintain their own fault-handling logic.</p>
+      <p class="rv">AI agents are a rapidly evolving type of application currently. Developers face a tradeoff between agent autonomy versus reliability. AI agents capable of taking real-world actions must touch existing production systems which are often highly distributed and inherently unreliable. These agents will inherit the same risks of failure that warrant durable execution.</p>
+      <p class="rv">In this case study, we introduce how durable execution applies to AI agents, describe how existing durable execution solutions work, and discuss how we addressed agent-specific challenges while building Amber.</p>
+    </div>
+  </section>
+
+  <!-- ============ DURABLE EXECUTION ============ -->
+  <section id="durable">
+    <div class="col">
+      <p class="eyebrow">Background · 2.1</p>
+      <h2 class="rv">What is Durable Execution?</h2>
+      <p class="rv">Unlike normal code execution, durable execution persists its progress as it runs and, after a crash, resumes from that saved progress rather than starting over. Conceptually, from the developer's point of view, the application's execution flow behaves as if the failure had never happened. To clarify though, durable execution does not imply that failures do not happen, or that they happen less.</p>
+      <p class="rv">It's worth identifying what's normally lost when an application crashes. The failed process loses not only the in-memory state, such as variable values, but also the awareness of which steps had already run and which one was meant to run next. Normal execution that doesn't preserve state has little choice but to start over from the beginning.</p>
+      <p class="rv">For example, consider code that executes a sequence of five steps where crashes can happen mid-operation at any step.</p>
+
+      <div class="panel rv" id="abpanel">
+        <div class="ptitle">
+          <span>Normal vs durable execution</span>
+          <div class="seg-toggle" id="abtoggle">
+            <button class="active" data-mode="plain">Normal execution</button>
+            <button data-mode="amber">Durable execution</button>
+          </div>
+        </div>
+        <div class="track" id="abtrack">
+          <div class="tstep" data-i="1"><span class="n">step 1</span></div>
+          <div class="tstep" data-i="2"><span class="n">step 2</span></div>
+          <div class="tstep" data-i="3"><span class="n">step 3</span></div>
+          <div class="tstep" data-i="4"><span class="n">step 4</span></div>
+          <div class="tstep" data-i="5"><span class="n">step 5</span></div>
+        </div>
+        <p class="ab-readout" id="abread">Pick a mode, then simulate a crash mid-operation.</p>
+        <button class="btn crash" id="abrun">⟳ simulate crash</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXISTING SOLUTIONS ============ -->
+  <section id="existing">
+    <div class="col">
+      <p class="eyebrow">Existing solutions</p>
+      <h2 class="rv">Existing solutions</h2>
+
+      <h3 class="rv">DIY</h3>
+      <p class="rv">Prior to these durable execution projects, developers had to figure out ways to handle workflow durability on their own. Home-grown solutions were often developed such as stateful queues or job handlers, database-stored state machines, and complex checkpointing code. As these systems grew more complex, this infrastructure code can become increasingly difficult to maintain, test, and make reliable.</p>
+      <p class="rv">It is important to note that DIY solutions are not necessarily "battle tested" to handle many different types of failures. Homegrown solutions often require more effort to reach the same level of resilience as a purpose-built platform, and may miss edge cases that dedicated systems already handle. Organizations might not be comfortable with critical business systems relying on unproven durability architecture.</p>
+
+      <h3 class="rv">Temporal</h3>
+      <p class="rv">Temporal is the open source fork of "Cadence", a project created at Uber. Uber is known to have a large-scale distributed micro-services architecture, with thousands of different micro-services. "Cadence" was their own internal project to add a layer of reliability to this infrastructure, and the founding team eventually forked it and founded Temporal. Temporal offers a hosted cloud platform for companies for developers that are seeking to add durable execution to their application logic. Because it is open source, it is possible to self-host a Temporal cluster, which can be important for organizations that have privacy and compliance concerns.</p>
+      <p class="rv">Coming from such a large, successful company like Uber, Temporal is a proven technology with real world results. However, there are some aspects which may not appeal to all developers. Code must be organized into two layers; deterministic code and code with side effects must be handled differently. Additionally, a Temporal cluster can be quite complicated to maintain, and, despite being open source, self-hosting may not be feasible for smaller organizations.</p>
+
+      <h3 class="rv">Inngest</h3>
+      <p class="rv">Inngest was born to manage reliable background jobs and event-driven workflows in modern serverless architectures. Like Temporal, it offers a cloud service that manages durable execution state, but it simplifies the developer experience significantly: developers write ordinary async functions and wrap side-effecting logic in built-in step primitives. The step results are memoized on the platform, so functions can be interrupted and resumed without needing a deterministic/non-deterministic code split.</p>
+      <p class="rv">While the source code for Inngest is available, and self-hosting Inngest is possible, the license for the source code is not exactly open source. This lack of clarity may deter developers and organizations who are looking to self-host their durable execution environment. Organizations with concerns about privacy and data compliance may also find issues with relying on a cloud service.</p>
+
+      <div class="ph rv">
+        <p class="ptag">Placeholder · comparison table</p>
+        <p class="pwhat">Open Source · Self Hosted · Dev Experience · Easy to set up</p>
+        <p class="phint">[comparison table] from the draft</p>
+      </div>
+
+      <p class="rv">While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations who value self-hosting their own platforms due to cost or compliance concerns do not have a ready solution that combines good developer experience and simple, easy-to-maintain infrastructure with a truly open source durable execution engine.</p>
+    </div>
+  </section>
+
+  <!-- ============ WHERE AMBER FITS ============ -->
+  <section id="fits">
+    <div class="col">
+      <p class="eyebrow">Where Amber fits</p>
+      <h2 class="rv">Where Amber fits</h2>
+      <p class="rv">Amber fills the gap that the existing tools leave open. For developers who want self-hosted durable execution without adding bulky infrastructure, Amber builds on DBOS. DBOS is a durable execution engine that runs embedded in the developer's application, and relies on Postgres alone for persistence and recovery. Nothing else has to be deployed or run alongside the application.</p>
+      <p class="rv">Another angle Amber tackles is agent observability. While many full-featured observability tools already exist, they only record data on each individual span, not on the status of a workflow overall. Durable execution engines are the reverse: they track and recover a workflow's state, but can't see inside the agent, its tool calls, its LLM input and output, or its token usage and cost. Amber does both, recovering the workflow and giving visibility into the agent running inside it.</p>
+    </div>
+  </section>
+
+  <!-- ============ HOW WE BUILT AMBER ============ -->
+  <section id="built">
+    <div class="col">
+      <p class="eyebrow">How we built Amber</p>
+      <h2 class="rv">How we built Amber</h2>
+
+      <h3 class="rv">High-Level Architecture</h3>
+      <p class="rv">Amber is composed of five main subsystems:</p>
+      <ol class="rv" style="color:var(--body)">
+        <li>Developer SDK</li>
+        <li>Durable Execution Engine</li>
+        <li>Worker Runtime</li>
+        <li>Observability Admin Dashboard</li>
+        <li>Self-hosted AWS Deployment</li>
+      </ol>
+      <p class="rv">Together, these let developers define AI agents in their application code while Amber handles queueing, recovery, workflow state, observability, and cloud infrastructure.</p>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · diagram</p>
+        <p class="pwhat">[Diagram of the 5 high level components? Generic components at a high level (What does this look like)]</p>
+      </div>
+
+      <h3 class="rv">Developer SDK</h3>
+      <p class="rv">To use Amber the developer first imports the methods from the amber package into their Python application.</p>
+      <div class="code rv">
+        <div class="chead"><span>[code block showing the import]</span><span>python</span></div>
+<pre><span class="tok-kw">from</span> amber <span class="tok-kw">import</span> …</pre>
+      </div>
+      <p class="rv">For more guidance on how to use these methods, please refer to the README docs for the amber-sdk <a href="https://github.com/amber-runtime/amber/blob/main/sdk/README.md">https://github.com/amber-runtime/amber/blob/main/sdk/README.md</a></p>
+
+      <h3 class="rv">Durable Execution Engine</h3>
+      <p class="rv">Early in Amber's design, we debated whether to build our own durable execution system or adopt an existing solution.</p>
+      <p class="rv">At first, we considered building our own durable execution engine. However, we realized this would add significant complexity and slow development. Durable execution requires handling workflow checkpointing, retries, state persistence, failure recovery, and workflow resumption. These are difficult distributed systems problems. Since proven solutions already existed, we decided to check existing technologies instead</p>
+      <p class="rv">DBOS fits our architecture more naturally. DBOS runs directly inside the developer's application and only requires a Postgres database for durability, checkpointing, and queue-backed execution. More importantly, workflow state, queueing, and observability data could all live in one place. This simplified Amber's architecture and reduced the amount of infrastructure developers needed to manage.</p>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · diagram</p>
+        <p class="pwhat">[Diagram of developer's application writing workflows to a postgres instance] [Or diagram of workflow being written to postgres but then dies and then resumes from checkpointed state]</p>
+      </div>
+
+      <h3 class="rv">Worker Runtime</h3>
+      <p class="rv">Amber separates request handling from agent execution. The developer's application service accepts requests and enqueues agent workflows. A separate dedicated worker service drains the queues and performs the long running work. The reason for this is better separation of concerns and allows for individual scaling of the application server and worker service based on their own traffic.</p>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · diagram</p>
+        <p class="pwhat">[Diagram showing how the developer's application only enqueues while we have a separate worker pool that drains from the queue (postgres)]</p>
+      </div>
+
+      <h3 class="rv">Observability Admin Dashboard</h3>
+      <p class="rv">One challenge we encountered when building Amber was observability for durable agent workflows. The current tools solve separate problems. Tools like Phoenix and Braintrust solve the agent visibility problem through usage of spans, LLM calls, and tool invocations. However, they are not workflow durability focused and do not show what happens during execution.</p>
+      <p class="rv">On the other hand, durable workflow platforms like Temporal and Inngest focus on workflow orchestration. They provide insight into workflow state, retries, failures, and the execution state, but do not provide agent specific information. If you want agent specific information you have to connect through a third party tool.</p>
+      <p class="rv">Since Amber focuses on durable execution for AI agents, we found that developers needed insight into both agent related information and durable execution state. The reason is because when an agent workflow fails and eventually recovers, we as developers need to understand the why and what the current agent information that led to that state.</p>
+      <p class="rv">As a result, we designed Amber's admin dashboard to combine both perspectives into a single interface. The dashboard provides workflow level visibility while also showing AI specific information such as LLM calls, tool invocations, token cost, just to name a few. This gives the developers enough context to debug failure states and inspect long running workflows to better understand the agent behavior.</p>
+
+      <div class="panel rv" id="ganttpanel">
+        <div class="ptitle"><span>Workflow timeline · crash + recovery</span>
+          <button class="btn" id="gbtn">▷ play recovery</button>
+        </div>
+        <div class="gantt" id="gantt">
+          <div class="glane"><span class="glabel">plan</span><div class="gtrack"><div class="gbar amb" data-l="2" data-w="14"></div></div></div>
+          <div class="glane"><span class="glabel">call_llm</span><div class="gtrack"><div class="gbar amb" data-l="16" data-w="18"></div></div></div>
+          <div class="glane"><span class="glabel">scrape</span><div class="gtrack"><div class="gbar amb" data-l="34" data-w="16"></div></div></div>
+          <div class="glane"><span class="glabel">summarize</span><div class="gtrack"><div class="gbar" data-l="70" data-w="20"></div></div></div>
+          <div class="glane"><span class="glabel"></span>
+            <div class="gtrack" style="background:transparent;height:0;position:relative;overflow:visible">
+              <div class="crashline" id="crash" style="left:50%"><span class="ctag">✕ process evicted</span></div>
+              <div class="gapband" id="gap-band" style="left:50%;width:20%"><span class="gtag">recovery gap · 6.2s</span></div>
+            </div>
+          </div>
+          <div class="gaxis"><span>0s</span><span>crash</span><span>resume</span><span>done</span></div>
+        </div>
+        <p class="ab-readout" id="gread" style="margin-top:14px">The amber steps were preserved. Execution resumed after the recovery gap.</p>
+      </div>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · screenshot</p>
+        <p class="pwhat">[Screenshot of dashboard? And then remove it from the walkthrough?]</p>
+      </div>
+
+      <h3 class="rv">Self-hosted AWS Deployment</h3>
+      <p class="rv">Amber was designed to help developers deploy their application to their own AWS account. We make this easy with the use of the Amber CLI.</p>
+      <p class="rv">The major deployment pieces are CloudFront, ECS Fargate, RDS, and supporting AWS services.</p>
+
+      <p class="rv"><strong>CloudFront:</strong></p>
+      <p class="rv">CloudFront routes traffic by path:</p>
+      <ol class="rv" style="color:var(--body)">
+        <li>Application API requests go to the developer's FastAPI service.</li>
+        <li>Dashboard UI requests go to the Amber admin React frontend.</li>
+        <li>Dashboard API requests go to a separate FastAPI service and require Cognito authentication.</li>
+        <li>If the developer's application includes a React frontend, CloudFront serves that frontend at / and routes the FastAPI service under /api/*.</li>
+      </ol>
+      <p class="rv">The dashboard frontend loads in the browser and then uses Cognito sign in before requesting workflow data from the dashboard API.</p>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · diagram</p>
+        <p class="pwhat">[Diagram of the different routes when it hits cloudfront and then ALB? Maybe show S3 bucket serving the react frontends too]</p>
+      </div>
+
+      <p class="rv"><strong>ECS Fargate and RDS:</strong></p>
+      <p class="rv">Amber deploys three main ECS services:</p>
+      <ol class="rv" style="color:var(--body)">
+        <li>Developer's application FastAPI service which handles API requests and enqueues agent workflows.</li>
+        <li>Developer's worker service which drains queued workflows and executes long running agent workflows.</li>
+        <li>Admin Dashboard API service which reads workflow state and displays the information to the dashboard UI.</li>
+      </ol>
+      <p class="rv">All three ECS services connect through RDS Proxy to RDS Postgres. Postgres stores the durable workflow state, queue state, step history, and agent event data used by Amber.</p>
+
+      <p class="rv"><strong>Supporting AWS Services:</strong></p>
+      <p class="rv">List of supporting AWS services:</p>
+      <ol class="rv" style="color:var(--body)">
+        <li>ECR stores the developer's application, worker, and dashboard API container images.</li>
+        <li>SSM Parameter Store stores OpenAI API key.</li>
+        <li>Secrets Manager stores the database connection URL and RDS Proxy credentials.</li>
+        <li>S3 serves the static frontend assets for the Amber admin dashboard and if configured the developer's React frontend.</li>
+        <li>Cognito manages authentication for the admin dashboard.</li>
+        <li>CloudWatch collects service logs and queue metrics for ECS autoscaling.</li>
+      </ol>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · diagram</p>
+        <p class="pwhat">[Full AWS diagram of Amber]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WALKTHROUGH ============ -->
+  <section id="walkthrough">
+    <div class="col">
+      <p class="eyebrow">Walkthrough</p>
+      <h2 class="rv">Walkthrough</h2>
+
+      <h3 class="rv">Dashboard</h3>
+      <p class="rv">Amber provides an admin dashboard to the developer for observability into their agent workflows</p>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · animation</p>
+        <p class="pwhat">[Maybe animate and if so only the second page with the error] -&gt; or do like a slide animation to show the error</p>
+      </div>
+
+      <h3 class="rv">Deployment on AWS</h3>
+      <p class="rv">Amber provides a CLI that you can use to easily deploy to AWS.</p>
+      <p class="rv">Amber also provides a way to use agents to interact with the workflows endpoint to get more information on workflows and for debugging.</p>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · animation</p>
+        <p class="pwhat">[Not sure about the animation CLI]</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ENGINEERING TRADEOFFS ============ -->
+  <section id="tradeoffs">
+    <div class="col">
+      <p class="eyebrow">Engineering Tradeoffs and Challenges</p>
+      <h2 class="rv">Engineering Tradeoffs and Challenges</h2>
+
+      <h3 class="rv">Durable Execution Engine</h3>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · diagram</p>
+        <p class="pwhat">[Possibly add a diagram showing what the architecture with lambda could have looked like?] [Or very small one just showing you would need AWS SQS vs only Postgres]</p>
+      </div>
+      <p class="rv">The two main options we considered were AWS Durable Lambdas and DBOS Transact. Since Amber's infrastructure already relied on AWS services, AWS Durable Lambdas seemed like a natural fit. Durable Lambdas support long running workflows without the 15 minute limit of standard AWS Lambda functions, which made them an attractive option.</p>
+      <p class="rv">Although AWS Durable Lambdas met many of Amber's technical needs, we found that DBOS fit Amber's architecture better. Amber was designed around an embedded SDK model where developers add durable execution into their existing applications through decorators. We also wanted to provide a dashboard that combined workflow state with LLM calls, tool usage, and workflow progress.</p>
+      <p class="rv">With AWS Durable Lambdas, workflows would likely run inside Lambda functions triggered by the developer's application. While this approach provides managed durability and scaling, it would have added more moving parts to the system. Workflow state, traces, and dashboard data would likely need to come from many AWS services and custom data stores to support the level of observability Amber wanted to provide.</p>
+
+      <h3 class="rv">Trade offs</h3>
+      <p class="rv">The main trade off of choosing DBOS is that Postgres becomes a critical part of the system. In Amber's architecture, Postgres stores workflow state and also acts as the queue for workflows. Under heavy traffic, this can put more pressure on the database and requires monitoring of database performance, connection limits, and worker concurrency.</p>
+      <p class="rv">Another trade off is that Postgres becomes a larger dependency and possible bottleneck. Instead of spreading responsibility across several managed services, Amber keeps workflow durability, queueing, and observability data centered around Postgres. This simplified the architecture, but also made database sizing and monitoring more important.</p>
+      <p class="rv">We accepted these trade offs because they matched Amber's goal of being a lightweight, self hosted durable execution platform with minimal infrastructure while still providing rich agent observability.</p>
+
+      <h3 class="rv">Tracing</h3>
+      <p class="rv">One of challenges was getting more agent specific traces combined with each durable execution step</p>
+      <p class="rv">How we ended up with our final solution - collecting traces via openAI agents SDK, enriching our workflow step data with traces - stamping with DBOS id</p>
+      <ol class="rv" style="color:var(--body)">
+        <li>First Phoneix
+          <ol type="a">
+            <li>Realized unnecessary dependency, we didn't need their dashboard - because we providing our own</li>
+            <li>Also the trace stored was not connected to our DBOS status</li>
+          </ol>
+        </li>
+        <li>Tried OpenInference manually and stamping
+          <ol type="a">
+            <li>Stamping connecting it</li>
+            <li>removed the phoenix dashboard dependency but created traces - tree shaped
+              <ol type="i">
+                <li>But the shape of the traces was tree but DBOS is flat sequential -&gt; storing the wrong data structure that didn't match</li>
+                <li>It basically forced us to write query logic that was harder to read and maintain -</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li>Finally we used openAI agents sdk directly to collect traces, still stamping i think
+          <ol type="a">
+            <li>This gave us the meta-data - tools, subagents, etc</li>
+            <li>While making the trace collection and query logic very clean/tidy</li>
+            <li>Trace collection was native to the framework we were supporting - it's traedoff we made - narrow doesn't support other framework but better fits our use case</li>
+          </ol>
+        </li>
+      </ol>
+      <p class="rv">The result: we got tracing of metadata + easier to maintain + eliminated an unneeded dependency</p>
+      <p class="rv">How the stamping and join works:</p>
+      <p class="rv">The processor reads the DBOS workflow id and current step id when a span completes, and records them along with the event. The event is whatever the span captured, so an LLM call with its model and token counts, a tool call with its arguments and result, or a handoff from one agent to another. Once the events are tagged with those ids, they can be matched up later for use on the dashboard</p>
+
+      <div class="panel rv" id="joinpanel">
+        <div class="ptitle"><span>Correlate on workflow_id + step_id</span>
+          <button class="btn" id="joinbtn">▷ run the correlation</button>
+        </div>
+        <div class="join-stage" id="joinstage">
+          <div class="drow" id="row-a">
+            <div class="rhead slate">agent_events · the semantic trace</div>
+            <div class="cells">
+              <div class="cell"><span class="k">name</span>call_llm</div>
+              <div class="cell"><span class="k">tokens</span>3,140</div>
+              <div class="cell"><span class="k">cost</span>$0.021</div>
+              <div class="cell key" data-key="wf"><span class="k">workflow_id</span>a3f…91</div>
+              <div class="cell key" data-key="st"><span class="k">step_id</span>4</div>
+            </div>
+          </div>
+
+          <div class="join-op" id="joinop">↔ &nbsp; matched in the Python read layer on workflow_id + step_id</div>
+
+          <div class="drow" id="row-b">
+            <div class="rhead amb">DBOS · durable workflow state</div>
+            <div class="cells">
+              <div class="cell key" data-key="wf"><span class="k">workflow_uuid</span>a3f…91</div>
+              <div class="cell key" data-key="st"><span class="k">function_id</span>4</div>
+              <div class="cell"><span class="k">output</span>stored</div>
+              <div class="cell"><span class="k">status</span>completed</div>
+            </div>
+          </div>
+        </div>
+        <p class="ab-readout" id="joinread" style="margin-top:16px">Two independent rows, one shared key.</p>
+      </div>
+
+      <h3 class="rv">Embedded SDK Architecture vs Separate Runtime Server</h3>
+      <div class="ph rv">
+        <p class="ptag">Placeholder · diagram</p>
+        <p class="pwhat">[Diagram of the two different ways. One with the developer as the runtime server the second as the developer's application hitting a runtime server. Compare and contrast]</p>
+      </div>
+      <p class="rv">Our initial product decision was to have the developers host their agents on a runtime server that Amber would provide. The goal was to abstract away the durable execution runtime and manage it on the developer's behalf. However, we soon realized that most developers already have their own applications, and requiring them to shape their application around our runtime created unnecessary friction. Additionally, most developers are not bringing standalone agent files without an existing application.</p>
+      <p class="rv">Another observation we made was that the runtime server's main responsibility was only initializing the durable execution engine on behalf of the developer. Continuing with a separate runtime server meant introducing another network hop for developers who had their own application. Their application would first need to communicate with our runtime server to start a workflow. While this extra latency may seem trivial at first, it can compound when many workflows are being executed.</p>
+      <p class="rv">As a result, we decided to remove the separate runtime server because it did not provide meaningful value to the developers. Since Amber is designed to support self hosting, eliminating the runtime server also reduced infrastructure overhead by removing the need for an extra AWS ECS service.</p>
+      <p class="rv">We then simplified the SDK and made it easier for the developer to embed into their application. Instead of architecting their application around Amber, developers only need to import the SDK and decorate the functions or agents they want durable execution applied to.</p>
+
+      <h3 class="rv">Trade offs</h3>
+      <p class="rv">One trade off of the embedded SDK approach is that the developer's application becomes tightly coupled to the durable execution runtime. If the application goes down, workflow execution also pauses until the application is available again. However, because workflows are checkpointed to Postgres, execution state is not lost. Once the application recovers, workflows can resume from their last checkpoint rather than restarting from the beginning.</p>
+      <p class="rv">This trade off was acceptable because developers no longer need to provision and manage an extra runtime server. In local development, downtime may pause workflow execution completely, but in production environments applications can be horizontally scaled to reduce the impact of a single instance failure.</p>
+    </div>
+  </section>
+
+  <!-- ============ POTENTIAL FUTURE WORKS ============ -->
+  <section id="future">
+    <div class="col">
+      <p class="eyebrow">Potential Future Works</p>
+      <h2 class="rv">Potential Future Works</h2>
+      <ul class="rv" style="color:var(--body)">
+        <li>Support for other agent frameworks</li>
+        <li>Versioning</li>
+        <li>CLI refinement
+          <ul><li>Skills for agents</li></ul>
+        </li>
+        <li>RBAC and user auth refinement</li>
+        <li>Durable pause for human-in-loop</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="col">
+      <div class="f-cta rv">
+        <div style="display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--sans);font-weight:600;color:var(--amber);letter-spacing:-.02em;font-size:26px"><svg class="deericon lg" aria-hidden="true"><use href="#deermark" xlink:href="#deermark"/></svg>Amber</div>
+        <p style="margin:8px 0 14px;color:var(--mute)">Open-source, self-hosted durable execution and observability for AI agents.</p>
+        <p class="repo"><a href="https://github.com/amber-runtime/amber">github.com/amber-runtime/amber</a></p>
+      </div>
+      <p style="text-align:center;font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:26px">
+        Scaffold generated as a visual target. Prose is taken verbatim from the Rough Draft; the amber-dashed boxes mark assets to drop in.
+      </p>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r=>setTimeout(r, reduce?0:ms));
+
+/* ---- progress + minibar + active section ---- */
+const prog = document.getElementById('prog');
+const minibar = document.getElementById('minibar');
+const nowsec = document.getElementById('nowsec');
+const secNames = {durable:'what is durable execution',existing:'existing solutions',fits:'where Amber fits',built:'how we built Amber',walkthrough:'walkthrough',tradeoffs:'engineering tradeoffs',future:'future works'};
+addEventListener('scroll',()=>{
+  const h=document.documentElement;
+  const p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  prog.style.width=(p*100)+'%';
+  minibar.classList.toggle('show', h.scrollTop>520);
+},{passive:true});
+
+/* ---- scroll reveal + section label + minispine ---- */
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:.14});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+const secIo=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting && secNames[e.target.id]) nowsec.textContent=secNames[e.target.id]; });
+},{threshold:.3});
+['durable','existing','fits','built','walkthrough','tradeoffs','future'].forEach(id=>{const el=document.getElementById(id); if(el) secIo.observe(el);});
+
+/* ---- hero motif loop ---- */
+(function(){
+  const steps=[...document.querySelectorAll('#motif .motif-step')];
+  if(reduce){ steps.forEach(s=>s.classList.add('set')); return; }
+  let i=0;
+  setInterval(()=>{
+    if(i<steps.length){ steps[i].classList.add('set'); i++; }
+    else { steps.forEach(s=>s.classList.remove('set')); i=0; }
+  },820);
+})();
+
+/* ---- A/B step track ---- */
+(function(){
+  const track=document.getElementById('abtrack');
+  const steps=[...track.querySelectorAll('.tstep')];
+  const read=document.getElementById('abread');
+  const run=document.getElementById('abrun');
+  const toggle=document.getElementById('abtoggle');
+  let mode='plain';
+
+  function reset(){ steps.forEach(s=>s.className='tstep'); read.innerHTML='Pick a mode, then simulate a crash mid-operation.'; }
+
+  toggle.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    [...toggle.children].forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); mode=b.dataset.mode; reset();
+  });
+
+  async function play(){
+    run.disabled=true; reset();
+    for(let k=0;k<2;k++){ steps[k].classList.add('running'); await sleep(360); steps[k].classList.remove('running'); steps[k].classList.add('done'); }
+    steps[2].classList.add('running'); await sleep(420);
+    steps[2].classList.remove('running'); steps[2].classList.add('crashpt');
+    read.innerHTML='<span class="bad">✕ crash mid-operation at step 3.</span>'; await sleep(680);
+
+    if(mode==='plain'){
+      steps.forEach(s=>s.className='tstep');
+      for(let k=0;k<2;k++){ steps[k].classList.add('wasted'); await sleep(240); }
+      read.innerHTML='<span class="bad">In normal execution, completed work is discarded, retries starts over from scratch</span>';
+    } else {
+      for(let k=0;k<2;k++){ steps[k].className='tstep preserved'; await sleep(200); }
+      steps[2].className='tstep'; steps[3].className='tstep'; steps[4].className='tstep';
+      read.innerHTML='In durable execution, work is preserved each step, retries can resume from the last successfully recorded step.';
+      await sleep(520);
+      for(let k=2;k<5;k++){ steps[k].classList.add('running'); await sleep(360); steps[k].classList.remove('running'); steps[k].classList.add('done'); }
+    }
+    run.disabled=false;
+  }
+  run.addEventListener('click',play);
+})();
+
+/* ---- JOIN reveal ---- */
+(function(){
+  const stage=document.getElementById('joinstage');
+  const op=document.getElementById('joinop');
+  const read=document.getElementById('joinread');
+  const btn=document.getElementById('joinbtn');
+  const rowA=document.getElementById('row-a');
+  const rowB=document.getElementById('row-b');
+  const keys=stage.querySelectorAll('.cell.key');
+
+  async function run(){
+    btn.disabled=true;
+    keys.forEach(c=>c.classList.remove('lit')); op.classList.remove('show');
+    rowA.classList.remove('merge-up'); rowB.classList.remove('merged');
+    read.textContent='Two independent rows, one shared key.';
+    await sleep(300);
+    op.classList.add('show');
+    stage.querySelectorAll('[data-key="wf"]').forEach(c=>c.classList.add('lit')); await sleep(520);
+    stage.querySelectorAll('[data-key="st"]').forEach(c=>c.classList.add('lit')); await sleep(620);
+    read.innerHTML='Keys match. <span class="hi">workflow_id → workflow_uuid</span>, <span class="hi">step_id → function_id</span>.'; await sleep(620);
+    rowA.classList.add('merge-up'); rowB.classList.add('merged');
+    read.innerHTML='Correlated. One per-step view now holds what the agent <span style="color:var(--slate)">did</span> and whether it <span class="hi">survived</span>.';
+    btn.disabled=false;
+  }
+  btn.addEventListener('click',run);
+})();
+
+/* ---- Gantt ---- */
+(function(){
+  const panel=document.getElementById('ganttpanel');
+  const bars=[...panel.querySelectorAll('.gbar')];
+  const crash=document.getElementById('crash');
+  const band=document.getElementById('gap-band');
+  const btn=document.getElementById('gbtn');
+
+  function lay(final){
+    bars.forEach(b=>{ b.style.left=b.dataset.l+'%'; b.style.width=(final?b.dataset.w:0)+'%'; });
+    crash.classList.toggle('show',final); band.classList.toggle('show',final);
+  }
+  lay(false);
+  if(reduce){ lay(true); }
+
+  async function play(){
+    btn.disabled=true; lay(false); await sleep(120);
+    for(let i=0;i<3;i++){ bars[i].style.width=bars[i].dataset.w+'%'; await sleep(420); }
+    crash.classList.add('show'); await sleep(450);
+    band.classList.add('show'); await sleep(700);
+    bars[3].style.width=bars[3].dataset.w+'%'; await sleep(420);
+    btn.disabled=false;
+  }
+  btn.addEventListener('click',play);
+})();
+</script>
+</body>
+</html>
