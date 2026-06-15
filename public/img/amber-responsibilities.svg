@@ -1,0 +1,52 @@
+<svg viewBox="0 0 980 410" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <defs>
+    <marker id="arrowSlate" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#475569"/>
+    </marker>
+    <marker id="arrowAmber" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#F59E0B"/>
+    </marker>
+  </defs>
+
+  <!-- panel -->
+  <rect x="8" y="8" width="964" height="394" rx="20" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- title -->
+  <text x="50" y="64" fill="#f8fafc" font-size="26" font-weight="600">What Amber does</text>
+  <text x="50" y="92" fill="#94a3b8" font-size="14">Three responsibilities, left to right.</text>
+
+  <!-- arrows -->
+  <line x1="290" y1="250" x2="370" y2="250" stroke="#475569" stroke-width="2" marker-end="url(#arrowSlate)"/>
+  <text x="330" y="238" fill="#94a3b8" font-size="11" text-anchor="middle">starts run</text>
+
+  <line x1="610" y1="250" x2="690" y2="250" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrowAmber)"/>
+  <text x="650" y="238" fill="#fcd34d" font-size="11" text-anchor="middle">state + traces</text>
+
+  <!-- block 1: Build -->
+  <rect x="50" y="130" width="240" height="240" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="72" y="170" fill="#64748b" font-size="13" font-weight="600" letter-spacing="1">01</text>
+  <text x="72" y="206" fill="#f8fafc" font-size="22" font-weight="600">Build</text>
+  <text x="72" y="242" fill="#cbd5e1" font-size="14">Add durable execution and</text>
+  <text x="72" y="266" fill="#cbd5e1" font-size="14">tracing with decorators.</text>
+  <text x="72" y="290" fill="#cbd5e1" font-size="14">No framework rewrite.</text>
+
+  <!-- block 2: Run and Recover (durable-state origin, amber accent) -->
+  <rect x="370" y="130" width="240" height="240" rx="14" fill="#1e293b" stroke="#F59E0B" stroke-width="1.5" stroke-opacity="0.5"/>
+  <text x="392" y="170" fill="#64748b" font-size="13" font-weight="600" letter-spacing="1">02</text>
+  <text x="392" y="206" fill="#f8fafc" font-size="22" font-weight="600">Run &amp; Recover</text>
+  <text x="392" y="242" fill="#cbd5e1" font-size="14">Run and record every step.</text>
+  <text x="392" y="266" fill="#cbd5e1" font-size="14">After a crash, resume from</text>
+  <text x="392" y="290" fill="#cbd5e1" font-size="14">the last recorded step.</text>
+  <rect x="392" y="326" width="104" height="26" rx="13" fill="#F59E0B" fill-opacity="0.14" stroke="#F59E0B" stroke-opacity="0.45" stroke-width="1"/>
+  <text x="444" y="343" fill="#fcd34d" font-size="12.5" text-anchor="middle">checkpointed</text>
+
+  <!-- block 3: Observe (durable-state destination, amber chip) -->
+  <rect x="690" y="130" width="240" height="240" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="712" y="170" fill="#64748b" font-size="13" font-weight="600" letter-spacing="1">03</text>
+  <text x="712" y="206" fill="#f8fafc" font-size="22" font-weight="600">Observe</text>
+  <text x="712" y="242" fill="#cbd5e1" font-size="14">See what finished, where</text>
+  <text x="712" y="266" fill="#cbd5e1" font-size="14">it crashed, and what</text>
+  <text x="712" y="290" fill="#cbd5e1" font-size="14">recovered.</text>
+  <rect x="712" y="326" width="84" height="26" rx="13" fill="#F59E0B" fill-opacity="0.14" stroke="#F59E0B" stroke-opacity="0.45" stroke-width="1"/>
+  <text x="754" y="343" fill="#fcd34d" font-size="12.5" text-anchor="middle">recovered</text>
+</svg>

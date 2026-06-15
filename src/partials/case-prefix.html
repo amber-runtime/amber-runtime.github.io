@@ -1,0 +1,61 @@
+<div class="progress" id="prog"></div>
+
+<header class="minibar">
+  <span class="brand"><img class="deer" src="assets/brand-2.svg" alt="Amber deer mark">Amber</span>
+  <span class="kind">Case study</span>
+  <span class="now">§00 · <b>Introduction</b></span>
+</header>
+
+<div class="wrap">
+<div class="hero-glow" aria-hidden="true"></div>
+<div class="page">
+<div class="layout">
+
+  <!-- left rail: section index -->
+  <aside class="rail">
+    <p class="rlabel">Contents</p>
+    <ul class="idx">
+      <li class="on"><a class="ix" href="#intro"><span class="num">00</span><span>Introduction</span></a></li>
+      <li><a class="ix" href="#durable"><span class="num">01</span><span>Durable execution</span></a></li>
+      <li><a class="ix" href="#agents"><span class="num">02</span><span>Agents</span></a></li>
+      <li><a class="ix" href="#existing"><span class="num">03</span><span>Existing solutions</span></a></li>
+      <li><a class="ix" href="#fits"><span class="num">04</span><span>Where Amber fits</span></a></li>
+      <li><a class="ix" href="#built"><span class="num">05</span><span>How we built it</span></a></li>
+      <li><a class="ix" href="#walkthrough"><span class="num">06</span><span>Walkthrough</span></a></li>
+      <li><a class="ix" href="#tradeoffs"><span class="num">07</span><span>Tradeoffs</span></a></li>
+      <li><a class="ix" href="#future"><span class="num">08</span><span>Future work</span></a></li>
+    </ul>
+    <p class="meas"><b>RUNTIME</b><br>DBOS + Postgres<br>OpenAI Agents SDK<br><br><b>LICENSE</b><br>open source</p>
+  </aside>
+
+  <!-- main -->
+  <main class="main">
+    <!-- ============ §00 INTRODUCTION ============ -->
+    <section class="sec sec-intro" id="intro" data-screen-label="Introduction">
+      <div class="opener">
+        <div class="prose">
+          <img class="deer-feature" src="assets/brand-2.svg" alt="Amber">
+          <p class="eyebrow"><span class="sn">00</span> Introduction <span class="ln"></span></p>
+          <h1><span class="bword">Amber</span> is an open‑source, self‑hosted <span class="grad">durable execution</span> runtime for long‑running AI agents.</h1>
+          <p class="lede">This runtime lets an agent <em>resume precisely from any completed step</em> when failures occur in production.</p>
+
+          <p class="metaline">
+            <span class="av"><span class="pip"></span>Amber Runtime</span>
+            <span class="sep">·</span>
+            <span>Engineering case study</span>
+            <span class="sep">·</span>
+            <span class="tag">DBOS + POSTGRES</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="secbody">
+        <p class="bp">Durable execution is an approach to executing code in a crash-proof way. It's about ensuring an application can run from start to finish and recover from any failures without starting over. Without a durable execution runtime, developers often have to hand-write and maintain their own fault-handling logic.</p>
+        <img src="img/amber-hero-minimal.svg" alt="Without Amber an agent restarts from the beginning after a crash; with Amber it resumes from the last saved step." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+        <p class="bp">AI agents are a rapidly evolving type of application currently. Developers face a tradeoff between agent autonomy versus reliability. AI agents capable of taking real-world actions must touch existing production systems which are often highly distributed and inherently unreliable. These agents will inherit the same risks of failure that warrant durable execution.</p>
+        <p class="bp">In this case study, we introduce how durable execution applies to AI agents, describe how existing durable execution solutions work, and discuss how we addressed agent-specific challenges while building Amber.</p>
+      </div>
+    </section>
+
+    <!-- ============ §01 DURABLE EXECUTION ============ -->
+    

@@ -1,0 +1,522 @@
+<style>
+
+:root{
+  --ink:#09090b;
+  --ink-1:#111114;
+  --ink-2:#161619;
+  --edge:#27272a;
+  --bone:#f5f4f2;
+  --bone-dim:#d2d0ca;
+  --body:#aeaca3;
+  --mute:#a4a199;
+  --faint:#8a877f;
+
+  --amber:#f59e0b;
+  --amber-lt:#fbbf24;
+  --gold:#fcd34d;
+
+  /* product grammar: slate = normal flow / infra, red = failure, emerald = success, amber = preserved/recovered */
+  --slate:#64748b;
+  --slate-lt:#94a3b8;
+  --emerald:#10b981;
+  --emerald-lt:#34d399;
+  --red:#ef4444;
+  --red-lt:#f87171;
+
+  --line:rgba(245,158,11,.16);
+  --line-soft:rgba(228,228,231,.08);
+  --amber-wash:rgba(245,158,11,.06);
+
+  --display:'Space Grotesk',ui-sans-serif,system-ui,sans-serif;
+  --sans:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ink);color:var(--body);
+  font-family:var(--sans);font-size:18px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+/* faint warm tick grid */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52'%3E%3Cpath d='M26 22.5v7M22.5 26h7' stroke='%23f59e0b' stroke-opacity='0.045' stroke-width='1'/%3E%3C/svg%3E");
+}
+/* aurora: SUNSET spectrum at presence — coral/rose → pink → magenta → violet, ambient only (fixed top wash). Matches the case study. */
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1250px 1000px at 100% -20%, rgba(251,113,133,.38), rgba(251,113,133,.12) 38%, transparent 72%),
+    radial-gradient(1150px 950px at 64% -24%, rgba(236,72,153,.30), transparent 66%),
+    radial-gradient(1200px 1000px at 28% -22%, rgba(217,70,239,.27), rgba(217,70,239,.08) 42%, transparent 74%),
+    radial-gradient(1250px 1020px at -8% -8%, rgba(168,85,247,.30), rgba(168,85,247,.10) 40%, transparent 74%);
+}
+.wrap{position:relative;z-index:1}
+/* hero glow: wide, edgeless sunset pools washing behind and around the headline (scrolls away with the hero) */
+.hero-glow{
+  position:absolute;top:0;left:0;right:0;height:112vh;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(1120px 840px at 30% 32%, rgba(251,113,133,.34), rgba(251,113,133,.11) 44%, transparent 70%),
+    radial-gradient(1040px 800px at 80% 60%, rgba(168,85,247,.30), rgba(168,85,247,.09) 46%, transparent 70%),
+    radial-gradient(960px 720px at 60% 6%, rgba(236,72,153,.22), transparent 64%),
+    radial-gradient(860px 700px at 10% 74%, rgba(217,70,239,.20), transparent 66%);
+}
+/* recurring SUNSET aurora down the page: spectrum flows from both edges, strongest at the top (scrolls with content) */
+.wrap::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(1080px 900px at 112% 6%,  rgba(251,113,133,.14), rgba(251,113,133,.05) 40%, transparent 72%),
+    radial-gradient(1120px 940px at -14% 16%, rgba(168,85,247,.13), rgba(168,85,247,.04) 42%, transparent 74%),
+    radial-gradient(1120px 940px at 112% 30%, rgba(236,72,153,.12), rgba(236,72,153,.04) 42%, transparent 74%),
+    radial-gradient(1120px 940px at -14% 44%, rgba(217,70,239,.12), rgba(217,70,239,.04) 42%, transparent 74%),
+    radial-gradient(1120px 940px at 112% 58%, rgba(168,85,247,.12), rgba(168,85,247,.04) 42%, transparent 74%),
+    radial-gradient(1120px 940px at -14% 72%, rgba(251,113,133,.12), rgba(251,113,133,.04) 42%, transparent 74%),
+    radial-gradient(1120px 940px at 112% 86%, rgba(236,72,153,.12), rgba(236,72,153,.04) 42%, transparent 74%),
+    radial-gradient(1120px 940px at -14% 98%, rgba(168,85,247,.12), transparent 74%);
+}
+.shell{max-width:1180px;margin:0 auto;padding:0 40px}
+img.deer{display:block;width:auto;flex:none}
+
+/* ---------- masthead ---------- */
+.masthead{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:16px;
+  height:64px;padding:0 max(40px, calc((100% - 1180px)/2 + 40px));
+  background:rgba(9,9,11,.72);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
+.brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);
+  font-weight:600;font-size:20px;letter-spacing:-.02em;color:var(--amber);text-decoration:none}
+.brand .deer{height:26px}
+.masthead .spacer{flex:1}
+.masthead .mlink{font-family:var(--mono);font-size:12.5px;letter-spacing:.04em;color:var(--mute);
+  text-decoration:none;transition:color .18s;white-space:nowrap}
+.masthead .mlink:hover{color:var(--amber-lt)}
+.masthead .mlink.ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-soft);
+  border-radius:8px;padding:8px 13px;color:var(--bone-dim)}
+.masthead .mlink.ghost:hover{border-color:var(--line);color:var(--amber-lt)}
+.gh{width:15px;height:15px;fill:currentColor;display:block}
+
+/* ---------- hero ---------- */
+.hero{min-height:calc(100vh - 64px);display:grid;grid-template-columns:0.92fr 1.08fr;gap:clamp(40px,5vw,72px);
+  align-items:center;padding:96px 0 88px}
+.hero-copy{min-width:0;display:flex;flex-direction:column;justify-content:center}
+.hero-deer-wrap{display:flex;align-items:center;justify-content:center}
+.hero-deer{height:clamp(300px,38vw,520px);width:auto;display:block;
+  filter:drop-shadow(0 26px 80px rgba(245,158,11,.32))}
+.hero-wordmark{font-family:var(--display);font-weight:700;color:var(--amber);
+  font-size:clamp(60px,9vw,128px);line-height:.92;letter-spacing:-.045em;margin:0}
+.hero-rule{width:clamp(180px,32%,300px);height:2px;border:0;margin:clamp(20px,2.4vw,30px) 0 clamp(22px,2.6vw,32px);
+  background:linear-gradient(90deg,var(--amber),rgba(245,158,11,.15));border-radius:2px}
+.hero .subhead{font-size:clamp(19px,2vw,23px);line-height:1.55;color:var(--bone-dim);
+  max-width:46ch;margin:0 0 42px;font-weight:450}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:550;
+  font-size:16px;text-decoration:none;border-radius:10px;padding:15px 24px;transition:.18s;cursor:pointer}
+.btn .gh{width:18px;height:18px}
+.btn-primary{background:var(--amber);color:#1a1205;border:1px solid var(--amber);font-weight:600;
+  box-shadow:0 10px 30px -12px rgba(245,158,11,.6)}
+.btn-primary:hover{background:var(--amber-lt);border-color:var(--amber-lt);transform:translateY(-1px)}
+.btn-primary .arr{transition:transform .18s}
+.btn-primary:hover .arr{transform:translateX(3px)}
+.btn-secondary{background:transparent;color:var(--bone-dim);border:1px solid var(--edge)}
+.btn-secondary:hover{border-color:var(--amber);color:var(--amber-lt)}
+.hero-tags{display:flex;flex-wrap:wrap;gap:10px 22px;margin:48px 0 0;font-family:var(--mono);
+  font-size:12.5px;letter-spacing:.04em;color:var(--mute)}
+.hero-tags span{display:inline-flex;align-items:center;gap:9px}
+.hero-tags span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--amber);opacity:.85}
+.scrollcue{display:inline-flex;align-items:center;gap:10px;margin-top:64px;font-family:var(--mono);
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.scrollcue .arr{animation:bob 2.2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* ---------- section frame ---------- */
+.section{padding:84px 0;position:relative}
+.sec-eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--amber);margin:0 0 16px;display:flex;align-items:center;gap:11px}
+.sec-eyebrow .n{color:var(--faint);font-weight:500}
+.sec-title{font-family:var(--display);font-weight:600;color:var(--bone);
+  font-size:clamp(28px,3.4vw,42px);line-height:1.08;letter-spacing:-.025em;margin:0 0 18px}
+.sec-lede{font-size:18px;line-height:1.65;color:var(--body);max-width:56ch;margin:0;text-wrap:pretty}
+.sec-lede strong{color:var(--bone);font-weight:600}
+
+/* ---------- signature: draggable before / after ---------- */
+.sec-lede code{font-family:var(--mono);font-size:.86em;color:var(--amber-lt);
+  background:var(--amber-wash);border:1px solid var(--line);border-radius:5px;padding:1px 7px}
+.cmp{position:relative;margin:40px 0 18px;height:clamp(560px,72vh,656px);
+  border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:#0b0b0d;
+  box-shadow:0 40px 90px -50px rgba(0,0,0,.9);user-select:none;touch-action:none}
+.cmp-side{position:absolute;inset:0;overflow:hidden}
+.cmp-pad{position:absolute;inset:0;padding:54px 30px 26px;min-width:760px}
+.cmp-tag{position:absolute;top:18px;font-family:var(--mono);font-size:11.5px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;z-index:6}
+.cmp-tag .sub{display:block;font-size:10px;font-weight:500;letter-spacing:.12em;margin-top:4px;opacity:.7}
+/* BEFORE — left, neutral infra */
+.cmp-before{background:
+  linear-gradient(180deg,rgba(255,255,255,.018),transparent 40%),#0b0b0d;
+  clip-path:inset(0 calc(100% - var(--pos,72%)) 0 0)}
+.cmp-before .cmp-tag{left:30px;color:var(--slate-lt)}
+/* AFTER — right, amber resolution */
+.cmp-after{background:
+  radial-gradient(700px 460px at 100% 0%, rgba(245,158,11,.14), transparent 64%),
+  linear-gradient(180deg,rgba(245,158,11,.05),rgba(245,158,11,.015) 50%,transparent),#0c0a07;
+  clip-path:inset(0 0 0 var(--pos,72%))}
+.cmp-after .cmp-pad{left:auto;right:0;min-width:560px}
+.cmp-after .cmp-tag{right:30px;color:var(--amber)}
+.cmp-code{margin:0;font-family:var(--mono);font-size:13px;line-height:1.5;color:var(--bone-dim);
+  white-space:pre;tab-size:2}
+.cmp-after .cmp-code{font-size:15px;line-height:1.62}
+.cmp-code .c{color:var(--faint);font-style:italic}
+.cmp-code .kw{color:var(--mute)}
+.cmp-code .plumb{color:var(--slate-lt)}
+.cmp-code .dec{color:var(--amber);font-weight:600}
+.cmp-code .str{color:var(--emerald-lt)}
+/* divider + handle */
+.cmp-handle{position:absolute;top:0;bottom:0;left:var(--pos,72%);width:2px;z-index:8;
+  background:linear-gradient(180deg,rgba(245,158,11,.2),var(--amber),rgba(245,158,11,.2));
+  transform:translateX(-50%);cursor:ew-resize}
+.cmp-grab{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:46px;height:46px;border-radius:50%;background:var(--bone);color:#1a1205;
+  display:flex;align-items:center;justify-content:center;cursor:ew-resize;
+  box-shadow:0 6px 22px rgba(0,0,0,.55),0 0 0 6px rgba(245,158,11,.16);
+  font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:-.05em}
+.cmp-grab:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
+.cmp-hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:7;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);white-space:nowrap;transition:opacity .3s}
+.cmp.touched .cmp-hint{opacity:0}
+.cmp-foot{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12.5px;
+  letter-spacing:.03em;color:var(--mute);margin:2px 2px 0}
+.cmp-foot b{color:var(--amber-lt);font-weight:600}
+.cmp-foot .dot{width:5px;height:5px;border-radius:50%;background:var(--amber)}
+@media(max-width:880px){
+  .cmp{height:clamp(470px,108vw,580px)}
+  .cmp-code{font-size:11px}
+  .cmp-after .cmp-code{font-size:12.5px}
+  .cmp-pad{padding:48px 18px 22px;min-width:560px}
+}
+
+/* ---------- feature beats ---------- */
+.beat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,5vw,80px);align-items:center;
+  padding:72px 0;border-top:1px solid var(--line-soft)}
+.beat.flip .beat-copy{order:2}
+.beat.flip .beat-visual{order:1}
+.beat-copy .sec-eyebrow .lead{color:var(--amber)}
+.beat-copy .beat-h{font-family:var(--display);font-weight:600;color:var(--bone);
+  font-size:clamp(26px,2.9vw,38px);line-height:1.1;letter-spacing:-.025em;margin:0 0 18px}
+.beat-copy p{font-size:17.5px;line-height:1.65;color:var(--body);margin:0 0 18px;max-width:48ch;text-wrap:pretty}
+.beat-copy p:last-child{margin-bottom:0}
+.beat-copy strong{color:var(--bone);font-weight:600}
+.beat-copy .keyline{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);
+  font-size:13px;color:var(--amber-lt);margin-top:6px}
+.beat-copy .keyline::before{content:"";width:18px;height:1px;background:var(--amber)}
+.beat.weight{grid-template-columns:1fr;gap:34px}
+.beat.weight .beat-visual{order:2}
+
+/* visual cards */
+.card{border:1px solid var(--edge);border-radius:13px;background:#0c0c0e;overflow:hidden;
+  box-shadow:0 30px 70px -45px rgba(0,0,0,.9)}
+.card-bar{display:flex;align-items:center;gap:9px;height:38px;padding:0 14px;
+  border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.02)}
+.card-bar .dots{display:flex;gap:6px}
+.card-bar .dots i{width:9px;height:9px;border-radius:50%;background:#2a2a2e;display:block}
+.card-bar .ctitle{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--faint)}
+.card-bar .pill{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
+.pill-amber{color:var(--amber);background:var(--amber-wash);border:1px solid var(--line)}
+.pill-emerald{color:var(--emerald-lt);background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3)}
+.pill-slate{color:var(--slate-lt);background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.32)}
+
+/* beat 1: decorator code card */
+.codecard pre{margin:0;padding:22px 22px;font-family:var(--mono);font-size:14px;line-height:1.7;
+  color:var(--bone-dim);white-space:pre;overflow-x:auto}
+.codecard .c{color:var(--faint);font-style:italic}
+.codecard .kw{color:var(--mute)}
+.codecard .dec{color:var(--amber);font-weight:600}
+.codecard .dec-row{display:block;background:var(--amber-wash);box-shadow:inset 3px 0 0 var(--amber);
+  margin:0 -22px;padding:2px 22px}
+
+/* beat 2: recovery animation slot */
+.recslot{position:relative;border:1px dashed var(--line);border-radius:13px;background:
+  repeating-linear-gradient(135deg,rgba(245,158,11,.035),rgba(245,158,11,.035) 11px,transparent 11px,transparent 22px),#0b0b0d;
+  padding:30px 30px 26px;min-height:300px;display:flex;flex-direction:column}
+.recslot .rtag{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:9px;margin:0 0 4px}
+.recslot .rtag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.recslot .rsub{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin:0 0 26px}
+.recrow{display:flex;align-items:center;gap:9px;margin:auto 0}
+.recstep{flex:1;height:54px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;position:relative}
+.recstep.done{border:1px solid rgba(16,185,129,.45);background:rgba(16,185,129,.1);color:var(--emerald-lt)}
+.recstep.kept{border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.13);color:var(--amber-lt)}
+.recstep.resume{border:1px solid rgba(245,158,11,.6);background:rgba(245,158,11,.16);color:var(--amber-lt);
+  box-shadow:0 0 0 3px rgba(245,158,11,.13)}
+.recstep.todo{border:1px dashed var(--edge);background:rgba(255,255,255,.015);color:var(--faint)}
+.recstep.failed{border:1px solid rgba(239,68,68,.55);background:rgba(239,68,68,.12);color:var(--red-lt)}
+.recstep.next{border:1px solid rgba(100,116,139,.4);background:rgba(100,116,139,.1);color:var(--slate-lt)}
+.recstrike{width:2px;align-self:stretch;background:var(--red);position:relative;flex:none}
+.recstrike::after{content:"✕ crash";position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  white-space:nowrap;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em;
+  color:var(--red-lt);background:var(--ink);padding:2px 7px;border:1px solid rgba(239,68,68,.4);border-radius:4px}
+.reccap{font-family:var(--mono);font-size:11.5px;color:var(--body);margin:24px 0 0;line-height:1.6}
+.reccap b{color:var(--amber-lt);font-weight:600}
+.reclegend{display:flex;gap:18px;margin:14px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.reclegend span{display:inline-flex;align-items:center;gap:7px}
+.reclegend .sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex:none}
+.reclegend .sw.amb{background:rgba(245,158,11,.5);border:1px solid var(--amber)}
+.reclegend .sw.red{background:rgba(239,68,68,.4);border:1px solid var(--red)}
+.ph-tag{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px dashed var(--line);background:var(--amber-wash)}
+.ph-tag .d{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none}
+
+/* beat 3: dashboard inspector */
+.inspector{display:grid;grid-template-columns:1.15fr 1fr;min-height:340px}
+.insp-pane{padding:18px 18px}
+.insp-pane.trace{border-right:1px solid var(--line-soft)}
+.insp-head{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--mute);margin:0 0 16px;display:flex;align-items:center;gap:8px}
+.span{display:flex;align-items:center;gap:10px;padding:8px 0;font-family:var(--mono);font-size:12.5px;
+  color:var(--bone-dim);border-bottom:1px solid rgba(228,228,231,.05)}
+.span:last-child{border-bottom:0}
+.span .ico{width:7px;height:7px;border-radius:50%;flex:none}
+.span .ico.ok{background:var(--emerald)}
+.span .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.span .meta{color:var(--faint);font-size:11px}
+.span .ok-tag{color:var(--emerald-lt);font-size:10px;font-weight:600;letter-spacing:.08em}
+.span.indent{padding-left:18px}
+.span.indent .nm{color:var(--body)}
+.insp-pane.state{background:rgba(245,158,11,.03)}
+.wf-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-family:var(--mono);
+  font-size:12.5px;border-bottom:1px solid rgba(228,228,231,.05)}
+.wf-row .l{color:var(--mute)}
+.wf-row .v{color:var(--bone-dim);text-align:right}
+.wf-row .v.amber{color:var(--amber-lt)}
+.recovered{margin:16px 0 0;border:1px solid var(--line);border-radius:9px;background:var(--amber-wash);
+  padding:13px 14px;display:flex;align-items:flex-start;gap:11px}
+.recovered .rb{width:9px;height:9px;border-radius:50%;background:var(--amber);flex:none;margin-top:4px;
+  box-shadow:0 0 0 4px rgba(245,158,11,.16)}
+.recovered .rt{font-family:var(--mono);font-size:11.5px;line-height:1.55;color:var(--bone-dim)}
+.recovered .rt b{color:var(--amber-lt);font-weight:600;display:block;letter-spacing:.06em;
+  text-transform:uppercase;font-size:10.5px;margin-bottom:3px}
+.insp-foot{grid-column:1 / -1;border-top:1px solid var(--line-soft);padding:13px 18px;
+  font-family:var(--mono);font-size:12px;color:var(--mute);line-height:1.6;background:rgba(0,0,0,.2)}
+.insp-foot b{color:var(--bone-dim);font-weight:600}
+
+@media(max-width:880px){
+  .beat{grid-template-columns:1fr;gap:30px;padding:52px 0}
+  .beat.flip .beat-copy{order:1}
+  .beat.flip .beat-visual{order:2}
+  .inspector{grid-template-columns:1fr}
+  .insp-pane.trace{border-right:0;border-bottom:1px solid var(--line-soft)}
+}
+
+/* ---------- closing CTA ---------- */
+.closer{padding:120px 0 132px;text-align:center;position:relative}
+.closer::before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);
+  width:min(680px,80%);height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.closer .deer{height:46px;margin:0 auto 26px;filter:drop-shadow(0 6px 22px rgba(245,158,11,.25))}
+.closer h2{font-family:var(--display);font-weight:600;color:var(--bone);
+  font-size:clamp(30px,4vw,52px);line-height:1.04;letter-spacing:-.03em;margin:0 0 20px}
+.closer p{font-size:19px;color:var(--bone-dim);max-width:48ch;margin:0 auto 38px}
+.closer .btn{font-size:17px;padding:16px 30px}
+
+footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
+.foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-family:var(--mono);
+  font-size:12px;letter-spacing:.04em;color:var(--faint)}
+.foot .brand{font-size:15px;color:var(--amber);gap:8px}
+.foot .brand .deer{height:18px}
+.foot .spacer{flex:1}
+.foot a{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line-soft)}
+.foot a:hover{color:var(--amber-lt);border-color:var(--amber)}
+
+@media(max-width:880px){
+  .shell{padding:0 22px}
+  .masthead{padding:0 22px}
+  .hero{min-height:auto;padding:64px 0;grid-template-columns:1fr;gap:36px}
+  .hero-deer-wrap{order:-1;justify-content:flex-start}
+  .hero-deer{height:clamp(220px,52vw,320px)}
+  .section{padding:60px 0}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+</style>
+<div class="wrap">
+<div class="hero-glow" aria-hidden="true"></div>
+
+<header class="masthead">
+  <a class="brand" href="#top"><img class="deer" src="assets/brand-1.svg" alt="Amber deer mark">Amber</a>
+  <span class="spacer"></span>
+  <a class="mlink" href="case.html">Case study</a>
+  <a class="mlink ghost" href="https://github.com/amber-runtime/amber" target="_blank" rel="noopener">
+    <svg class="gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+    GitHub
+  </a>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero shell" id="top">
+  <div class="hero-deer-wrap">
+    <img class="hero-deer" src="assets/brand-1.svg" alt="Amber deer mark">
+  </div>
+  <div class="hero-copy">
+  <h1 class="hero-wordmark">Amber</h1>
+  <hr class="hero-rule">
+  <p class="subhead">Open source, self-hosted durable execution and observability for AI agents, built on DBOS and Postgres.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="case.html">Read the Case Study <span class="arr">→</span></a>
+    <a class="btn btn-secondary" href="https://github.com/amber-runtime/amber" target="_blank" rel="noopener">
+      <svg class="gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+      Download on GitHub
+    </a>
+  </div>
+  </div>
+</section>
+
+<!-- ===================== SIGNATURE MOMENT ===================== -->
+<section class="section shell" id="signature">
+  <p class="sec-eyebrow"><span class="n">01</span> The code</p>
+  <h2 class="sec-title">The crash-recovery code becomes a few decorators.</h2>
+  <p class="sec-lede">On the left is crash recovery written by hand: persist each step's output, detect that the process restarted, skip the steps already done, resume from the last one. <strong>Drag the handle right to left</strong> and all of it disappears. You mark each operation with <code>@step</code> and the agent with <code>@register_agent</code>. Underneath, DBOS checkpoints each step to Postgres, so a crash resumes from the last one that finished. Amber adds the observability and runs as a worker beside your app, with no separate orchestration service to stand up.</p>
+
+  <div class="cmp" id="cmp" style="--pos:72%">
+    <!-- BEFORE: hand-rolled plumbing -->
+    <div class="cmp-side cmp-before">
+      <span class="cmp-tag">Before<span class="sub">by hand</span></span>
+      <div class="cmp-pad"><pre class="cmp-code"><span class="c"># persist every step, detect the restart, skip what</span>
+<span class="c"># finished, resume from the last one that did not.</span>
+<span class="kw">async def</span> research_agent(topic, run_id):
+    <span class="plumb">state = <span class="kw">await</span> db.load(run_id)</span>
+    <span class="plumb">done = state.get(<span class="str">"steps"</span>, {})</span>
+
+    <span class="plumb"><span class="kw">if</span> <span class="str">"search"</span> <span class="kw">not in</span> done:</span>
+        sources = <span class="kw">await</span> web.search(topic)
+        <span class="plumb">done[<span class="str">"search"</span>] = sources</span>
+        <span class="plumb"><span class="kw">await</span> db.save(run_id, <span class="str">"search"</span>, sources)</span>
+    <span class="plumb">sources = done[<span class="str">"search"</span>]</span>
+
+    <span class="plumb"><span class="kw">if</span> <span class="str">"summarize"</span> <span class="kw">not in</span> done:</span>
+        notes = <span class="kw">await</span> llm.summarize(sources)
+        <span class="plumb">done[<span class="str">"summarize"</span>] = notes</span>
+        <span class="plumb"><span class="kw">await</span> db.save(run_id, <span class="str">"summarize"</span>, notes)</span>
+    <span class="plumb">notes = done[<span class="str">"summarize"</span>]</span>
+
+    <span class="plumb"><span class="kw">if</span> <span class="str">"write"</span> <span class="kw">not in</span> done:</span>
+        <span class="kw">await</span> db.write(topic, notes)
+        <span class="plumb">done[<span class="str">"write"</span>] = True</span>
+        <span class="plumb"><span class="kw">await</span> db.save(run_id, <span class="str">"write"</span>, True)</span>
+
+    <span class="kw">return</span> notes</pre></div>
+    </div>
+
+    <!-- AFTER: one decorator, body unchanged -->
+    <div class="cmp-side cmp-after">
+      <span class="cmp-tag">After<span class="sub">decorators</span></span>
+      <div class="cmp-pad"><pre class="cmp-code"><span class="c"># the same operations, marked as steps. the manual persistence is gone.</span>
+<span class="kw">from</span> amber <span class="kw">import</span> register_agent, step
+
+<span class="dec">@step</span>
+<span class="kw">async def</span> search(topic): ...
+<span class="dec">@step</span>
+<span class="kw">async def</span> summarize(sources): ...
+<span class="dec">@step</span>
+<span class="kw">async def</span> write(topic, notes): ...
+
+<span class="dec">@register_agent</span>(name=<span class="str">"research-agent"</span>)
+<span class="kw">async def</span> research_agent(topic):
+    sources = <span class="kw">await</span> search(topic)
+    notes = <span class="kw">await</span> summarize(sources)
+    <span class="kw">await</span> write(topic, notes)
+    <span class="kw">return</span> notes</pre></div>
+    </div>
+
+    <div class="cmp-hint">← drag to collapse the plumbing</div>
+    <div class="cmp-handle" id="cmpHandle">
+      <div class="cmp-grab" id="cmpGrab" role="slider" tabindex="0" aria-label="Reveal the decorated version" aria-valuemin="0" aria-valuemax="100" aria-valuenow="72">&lt;&nbsp;&gt;</div>
+    </div>
+  </div>
+
+  <p class="cmp-foot"><span class="dot"></span> Same operations, same logic. <b>The hand-written checkpoint-and-resume collapses into a few decorators you can read at a glance.</b></p>
+</section>
+
+<!-- ===================== FEATURE BEATS ===================== -->
+<div class="shell">
+
+  <!-- BEAT 2 -->
+  <section class="beat flip" id="beat-recover">
+    <div class="beat-copy">
+      <p class="sec-eyebrow"><span class="n">02</span> Recovery</p>
+      <h3 class="beat-h">Watch it recover from a crash.</h3>
+      <p>The process crashes mid-run. Finished steps are kept, not redone, and execution resumes from the last completed step as if nothing happened.</p>
+    </div>
+    <div class="beat-visual">
+      <div class="recslot">
+        <p class="rtag">Durable execution animation</p>
+        <p class="rsub">built separately · static frame</p>
+        <div class="recrow">
+          <div class="recstep kept">search</div>
+          <div class="recstep kept">summarize</div>
+          <div class="recstrike"></div>
+          <div class="recstep failed">write</div>
+        </div>
+        <p class="reccap">Crash at <b>write</b>. <b>search</b> and <b>summarize</b> were already durable, so the run resumes at <b>write</b> instead of step one.</p>
+        <div class="reclegend"><span><i class="sw amb"></i>preserved</span><span><i class="sw red"></i>crashed step</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEAT 3 -->
+  <section class="beat weight" id="beat-dashboard">
+    <div class="beat-copy" style="max-width:60ch">
+      <p class="sec-eyebrow"><span class="n">03</span> Observability</p>
+      <h3 class="beat-h">The agent and the workflow, in one place.</h3>
+      <p>Existing tools see one half each: a tracer watches the agent, a durable engine watches the workflow. Amber puts both in one inspector, so you can read the agent trace and the recovery state side by side, the thing neither half can show on its own.</p>
+    </div>
+    <div class="beat-visual">
+      <div class="card">
+        <div class="ph-tag"><span class="d"></span>placeholder · real dashboard screenshot</div>
+        <div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ctitle">workflow a3f91 · research_agent</span><span class="pill pill-amber">recovered</span></div>
+        <div class="inspector">
+          <div class="insp-pane trace">
+            <p class="insp-head">Agent trace</p>
+            <div class="span"><span class="ico ok"></span><span class="nm">research_agent</span><span class="ok-tag">OK</span></div>
+            <div class="span indent"><span class="ico ok"></span><span class="nm">web.search</span><span class="meta">412ms</span></div>
+            <div class="span indent"><span class="ico ok"></span><span class="nm">llm.summarize</span><span class="meta">3,140 tok</span></div>
+            <div class="span indent"><span class="ico ok"></span><span class="nm">db.write</span><span class="meta">38ms</span></div>
+            <div class="span"><span class="ico ok"></span><span class="nm">return notes</span><span class="ok-tag">OK</span></div>
+          </div>
+          <div class="insp-pane state">
+            <p class="insp-head">Workflow state</p>
+            <div class="wf-row"><span class="l">status</span><span class="v amber">RECOVERED</span></div>
+            <div class="wf-row"><span class="l">attempts</span><span class="v">2</span></div>
+            <div class="wf-row"><span class="l">resumed&nbsp;at</span><span class="v">step 3 · db.write</span></div>
+            <div class="wf-row"><span class="l">steps&nbsp;preserved</span><span class="v amber">2</span></div>
+            <div class="recovered">
+              <span class="rb"></span>
+              <span class="rt"><b>Recovered</b>The trace reads clean end to end. The workflow was restarted once and kept two finished steps and resumed at the third.</span>
+            </div>
+          </div>
+          <div class="insp-foot">Read latency, tokens, and tool calls like any tracer. The difference is the workflow state beside them, which is what tells you the agent crashed and recovered when the trace alone reads clean.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===================== CLOSER ===================== -->
+<section class="closer shell">
+  <img class="deer" src="assets/brand-1.svg" alt="Amber deer mark">
+  <h2>Read how we built it.</h2>
+  <p>The full engineering case study: durable execution for agents, the observability gap, and how Amber closes it on DBOS and Postgres.</p>
+  <a class="btn btn-primary" href="case.html">Read the Case Study <span class="arr">→</span></a>
+</section>
+
+<footer>
+  <div class="shell foot">
+    <span class="brand"><img class="deer" src="assets/brand-1.svg" alt="">Amber</span>
+    <span class="spacer"></span>
+    <a href="case.html">Case study</a>
+    <a href="https://github.com/amber-runtime/amber" target="_blank" rel="noopener">GitHub</a>
+    <span>open source · self-hosted</span>
+  </div>
+</footer>
+
+</div>

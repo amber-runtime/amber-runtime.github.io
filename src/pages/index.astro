@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import body from '../partials/index.html?raw';
+import js from '../scripts/index.js?raw';
+const title = 'Amber — agents that survive the crash';
+const description = 'Open source, self-hosted durable execution and observability for AI agents, built on DBOS and Postgres.';
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="icon" type="image/svg+xml" href="assets/brand-2.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  </Fragment>
+  <Fragment set:html={body} />
+  <script is:inline set:html={js} />
+</Base>
