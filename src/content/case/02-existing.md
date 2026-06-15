@@ -7,7 +7,7 @@ screenLabel: "Existing solutions"
 title: "Existing solutions"
 ---
 Choosing a durable execution platform requires weighing three key factors:
-<ol>
+<ol class="bl">
 	<li>The first is how open the runtime is: some are fully open source, while others let you view the source code but restrict how it can be used, modified, or commercialized.</li>
 	<li>The second is whether you self-host the runtime or consume it as a managed cloud service.</li>
 	<li>The third is the infrastructure that each runtime requires to run, ranging from a single process backed by one database to a distributed cluster of services.</li>

@@ -29,6 +29,10 @@
     for(var k=0;k<items.length;k++) items[k].classList.toggle('on', k===i);
     if(now) now.innerHTML='\u00a7'+secs[i].n+' \u00b7 <b>'+secs[i].name+'</b>';
   }
+  items.forEach(function(item,i){
+    var link=item.querySelector(':scope > a.ix');
+    if(link) link.addEventListener('click',function(){ setActive(i); });
+  });
   var io=new IntersectionObserver(function(es){
     es.forEach(function(e){
       if(e.isIntersecting){

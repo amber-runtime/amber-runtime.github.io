@@ -6,10 +6,13 @@ label: "How we built Amber"
 screenLabel: "How we built Amber"
 title: "How we built Amber"
 ---
-<h3 class="sh">High-Level Architecture</h3>
+<h3 class="sh" id="high-level-architecture">High-Level Architecture</h3>
+
+To better understand how we built Amber, we start by presenting a high level overview of the components of Amber.
+
+[Diagram of the 5 components]
 
 Amber is composed of five main subsystems:
-
 <ol class="bl">
 <li>Developer SDK</li>
 <li>Durable Execution Engine</li>
@@ -20,67 +23,49 @@ Amber is composed of five main subsystems:
 
 Together, these let developers define AI agents in their application code while Amber handles queueing, recovery, workflow state, observability, and cloud infrastructure.
 
-<img src="img/amber-responsibilities.svg" alt="Amber's three responsibilities: build, run and recover, observe." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<h3 class="sh" id="durable-execution-engine">Durable Execution Engine</h3>
 
-<h3 class="sh">Developer SDK</h3>
+Early in Amber’s design, we debated whether to build our own durable execution system or adopt an existing solution.
 
-To use Amber the developer first imports the methods from the amber package into their Python application.
+At first, we considered building our own durable execution engine. However, we realized this would add significant complexity and slow development. Building a reliable durable execution system is hard. It requires solving difficult distributed systems problems. Since proven solutions already existed, we decided to evaluate existing technologies instead.
 
-<div class="code">
-<div class="chead"><span>[code block showing the import]</span><span>python</span></div>
-<pre><span class="tok-kw">from</span> amber <span class="tok-kw">import</span> …</pre>
-</div>
+[image of DBOS logo]
 
-For more guidance on how to use these methods, please refer to the README docs for the amber-sdk <a href="https://github.com/amber-runtime/amber/blob/main/sdk/README.md">https://github.com/amber-runtime/amber/blob/main/sdk/README.md</a>
+We ended up selecting DBOS because it aligned with Amber’s goal of keeping the architecture simple. DBOS runs directly inside the developer’s application and only requires a Postgres database for durability and queue-backed execution. Workflow state, queueing, and observability data could all live in one place. This simplified Amber’s architecture and reduced the infrastructure developers needed to manage.
 
-<h3 class="sh">Durable Execution Engine</h3>
-
-Early in Amber's design, we debated whether to build our own durable execution system or adopt an existing solution.
-
-At first, we considered building our own durable execution engine. However, we realized this would add significant complexity and slow development. Durable execution requires handling workflow checkpointing, retries, state persistence, failure recovery, and workflow resumption. These are difficult distributed systems problems. Since proven solutions already existed, we decided to check existing technologies instead
-
-DBOS fits our architecture more naturally. DBOS runs directly inside the developer's application and only requires a Postgres database for durability, checkpointing, and queue-backed execution. More importantly, workflow state, queueing, and observability data could all live in one place. This simplified Amber's architecture and reduced the amount of infrastructure developers needed to manage.
+DBOS’s queue backed execution model also influenced how we structured Amber’s runtime architecture. Since workflows could be persisted and executed asynchronously, we needed to decide how agent execution should be handled.
 
 <div class="aslot">
 <p class="atag">Placeholder · diagram</p>
 <p class="awhat">[Diagram of developer's application writing workflows to a postgres instance] [Or diagram of workflow being written to postgres but then dies and then resumes from checkpointed state]</p>
 </div>
 
-<h3 class="sh">Worker Runtime</h3>
+<h3 class="sh" id="worker-runtime">Worker Runtime</h3>
 
-Amber separates request handling from agent execution. The developer's application service accepts requests and enqueues agent workflows. A separate dedicated worker service drains the queues and performs the long running work. The reason for this is better separation of concerns and allows for individual scaling of the application server and worker service based on their own traffic.
+Originally, Amber supported both immediate and queued workflow execution. However, requiring developers to choose between execution models added unnecessary complexity. Since Amber primarily targets long running agent workflows that may pause, fail, or resume, we standardized on queued execution.
+
+As a result, Amber separates request handling from agent execution through a queue backed execution model. The developer’s application service running in AWS ECS accepts requests and enqueues agent workflows in Postgres. A dedicated worker service in AWS ECS then drains the queue and performs the long running work. This removes the need for a separate queueing system like AWS SQS.
+
+This separation allows the application service and worker runtime to scale independently based on their own traffic patterns.
 
 <div class="aslot">
 <p class="atag">Placeholder · diagram</p>
 <p class="awhat">[Diagram showing how the developer's application only enqueues while we have a separate worker pool that drains from the queue (postgres)]</p>
 </div>
 
-<h3 class="sh">Observability Admin Dashboard</h3>
+At this point, Amber could define durable agent workflows and execute them reliably. The next challenge was deployment. Since Amber is self hosted, developers needed a way to run these components inside their own AWS account.
 
-One challenge we encountered when building Amber was observability for durable agent workflows. The current tools solve separate problems. Tools like Phoenix and Braintrust solve the agent visibility problem through usage of spans, LLM calls, and tool invocations. However, they are not workflow durability focused and do not show what happens during execution.
+To make the AWS architecture easier to understand, we break it down into its major components before showing how everything fits together.
 
-On the other hand, durable workflow platforms like Temporal and Inngest focus on workflow orchestration. They provide insight into workflow state, retries, failures, and the execution state, but do not provide agent specific information. If you want agent specific information you have to connect through a third party tool.
+<h3 class="sh" id="self-hosted-aws-deployment">Self-hosted AWS Deployment</h3>
 
-Since Amber focuses on durable execution for AI agents, we found that developers needed insight into both agent related information and durable execution state. The reason is because when an agent workflow fails and eventually recovers, we as developers need to understand the why and what the current agent information that led to that state.
+[AWS logo]
 
-As a result, we designed Amber's admin dashboard to combine both perspectives into a single interface. The dashboard provides workflow level visibility while also showing AI specific information such as LLM calls, tool invocations, token cost, just to name a few. This gives the developers enough context to debug failure states and inspect long running workflows to better understand the agent behavior.
-
-<div class="aslot">
-<p class="atag">Placeholder · figure</p>
-<p class="awhat">Workflow timeline · crash + recovery</p>
-</div>
-<div class="aslot">
-<p class="atag">Placeholder · screenshot</p>
-<p class="awhat">[Screenshot of dashboard? And then remove it from the walkthrough?]</p>
-</div>
-
-<h3 class="sh">Self-hosted AWS Deployment</h3>
-
-Amber was designed to help developers deploy their application to their own AWS account. We make this easy with the use of the Amber CLI.
+To simplify deployment, we built the Amber CLI to provision the required infrastructure and deploy the application runtime in a couple of commands.
 
 The major deployment pieces are CloudFront, ECS Fargate, RDS, and supporting AWS services.
 
-<strong>CloudFront:</strong>
+<h4 class="ssh" id="cloudfront">CloudFront</h4>
 
 CloudFront routes traffic by path:
 
@@ -88,7 +73,7 @@ CloudFront routes traffic by path:
 <li>Application API requests go to the developer's FastAPI service.</li>
 <li>Dashboard UI requests go to the Amber admin React frontend.</li>
 <li>Dashboard API requests go to a separate FastAPI service and require Cognito authentication.</li>
-<li>If the developer's application includes a React frontend, CloudFront serves that frontend at / and routes the FastAPI service under /api/*.</li>
+<li>If the developer's application includes a React frontend, CloudFront serves that frontend at <code>/</code> and routes the FastAPI service under <code>/api/*</code>.</li>
 </ol>
 
 The dashboard frontend loads in the browser and then uses Cognito sign in before requesting workflow data from the dashboard API.
@@ -98,7 +83,7 @@ The dashboard frontend loads in the browser and then uses Cognito sign in before
 <p class="awhat">[Diagram of the different routes when it hits cloudfront and then ALB? Maybe show S3 bucket serving the react frontends too]</p>
 </div>
 
-<strong>ECS Fargate and RDS:</strong>
+<h4 class="ssh" id="ecs-fargate-and-rds">ECS Fargate and RDS</h4>
 
 Amber deploys three main ECS services:
 
@@ -110,7 +95,12 @@ Amber deploys three main ECS services:
 
 All three ECS services connect through RDS Proxy to RDS Postgres. Postgres stores the durable workflow state, queue state, step history, and agent event data used by Amber.
 
-<strong>Supporting AWS Services:</strong>
+<div class="aslot">
+<p class="atag">Placeholder · diagram</p>
+<p class="awhat">[Diagram of the three ecs services and RDS Proxy and RDS]</p>
+</div>
+
+<h4 class="ssh" id="supporting-aws-services">Supporting AWS Services</h4>
 
 List of supporting AWS services:
 
@@ -122,6 +112,14 @@ List of supporting AWS services:
 <li>Cognito manages authentication for the admin dashboard.</li>
 <li>CloudWatch collects service logs and queue metrics for ECS autoscaling.</li>
 </ol>
+
+<div class="aslot">
+<p class="atag">Placeholder · diagram</p>
+<p class="awhat">[Diagram of each of the individual services by itself]</p>
+</div>
+
+<h4 class="ssh" id="full-aws-diagram-of-amber">Full AWS Diagram of Amber</h4>
+
 <div class="aslot">
 <p class="atag">Placeholder · diagram</p>
 <p class="awhat">[Full AWS diagram of Amber]</p>

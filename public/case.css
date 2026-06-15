@@ -118,10 +118,17 @@ body::after{
 .idx li.on .num{color:var(--amber)}
 .idx li.has-sub{display:block}
 .subidx{list-style:none;margin:7px 0 2px;padding:0 0 0 22px}
+.idx > li.has-sub > .subidx{display:none}
+.idx > li.has-sub.on > .subidx{display:block}
 .subidx li{display:block;padding:3px 0;font-size:11.5px;font-weight:400;line-height:1.35;color:var(--mute)}
 .subidx li::before{content:none}
 .subidx a{color:inherit;text-decoration:none}
 .subidx a:hover{color:var(--amber-lt)}
+.subsubidx{list-style:none;margin:4px 0 0;padding:0 0 0 13px}
+.subsubidx li{display:block;padding:2px 0;font-size:11px;font-weight:400;line-height:1.3;color:var(--faint)}
+.subsubidx li::before{content:none}
+.subsubidx a{color:inherit;text-decoration:none}
+.subsubidx a:hover{color:var(--amber-lt)}
 .rail .meas{margin-top:22px;padding-top:14px;border-top:1px solid var(--line-soft);
   font-size:11.5px;font-weight:500;letter-spacing:.08em;color:var(--body);line-height:1.65}
 .rail .meas b{color:var(--mute);font-weight:600}
@@ -219,12 +226,19 @@ h1 .grad{
 .sh[id]{scroll-margin-top:88px}
 .sh::before{content:"";width:7px;height:7px;border-radius:1px;background:var(--amber);
   transform:translateY(-3px);flex:none}
+.ssh{font-family:var(--display);font-weight:600;color:var(--bone-dim);font-size:18px;line-height:1.35;
+  letter-spacing:0;margin:34px 0 12px;display:flex;align-items:baseline;gap:10px}
+.ssh[id]{scroll-margin-top:88px}
+.ssh::before{content:"";width:6px;height:1px;background:var(--amber);transform:translateY(-5px);flex:none}
 .bp{font-size:18px;line-height:1.72;color:var(--body);margin:0 0 22px;max-width:680px;text-wrap:pretty}
 .bp strong{color:var(--bone);font-weight:600}
 .bp a,.bl a{color:var(--amber-lt);text-decoration:none;border-bottom:1px solid var(--line);word-break:break-word}
 .bp a:hover,.bl a:hover{border-color:var(--amber)}
 .secbody a{color:var(--amber-lt);text-decoration:none;border-bottom:1px solid var(--line);word-break:break-word}
 .secbody a:hover{border-color:var(--amber)}
+.secbody code{font-family:var(--mono);font-size:.88em;color:var(--amber-lt);
+  background:var(--amber-wash);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.secbody pre code{font-size:inherit;color:inherit;background:transparent;border:0;border-radius:0;padding:0}
 .bl{font-size:18px;line-height:1.7;color:var(--body);max-width:680px;margin:0 0 22px;padding-left:26px}
 .bl li{margin:0 0 10px;padding-left:4px}
 .bl li::marker{color:var(--amber);font-family:var(--mono);font-size:13px}
