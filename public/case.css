@@ -105,19 +105,19 @@ body::after{
 .layout{display:grid;grid-template-columns:196px 1fr;gap:52px;align-items:start}
 
 /* left rail */
-.rail{position:sticky;top:84px;padding-top:108px;font-family:var(--mono)}
+.rail{position:sticky;top:84px;padding-top:clamp(32px, 8vh, 72px);font-family:var(--mono)}
 .rail .rlabel{font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
   color:var(--mute);margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}
 .idx{list-style:none;margin:0;padding:0}
 .idx li{position:relative;display:flex;gap:10px;align-items:baseline;
-  padding:7px 0 7px 14px;font-size:13px;font-weight:500;color:var(--bone-dim);transition:color .2s}
+  padding:6px 0 6px 14px;font-size:13px;font-weight:500;line-height:1.45;color:var(--bone-dim);transition:color .2s}
 .idx li::before{content:"";position:absolute;left:0;top:13px;width:6px;height:1px;background:var(--mute)}
 .idx li .num{color:var(--mute);font-size:11px;font-weight:500;letter-spacing:.05em}
 .idx li.on{color:var(--bone);font-weight:600}
 .idx li.on::before{width:9px;height:1px;background:var(--amber)}
 .idx li.on .num{color:var(--amber)}
-.rail .meas{margin-top:30px;padding-top:14px;border-top:1px solid var(--line-soft);
-  font-size:11.5px;font-weight:500;letter-spacing:.08em;color:var(--body);line-height:1.95}
+.rail .meas{margin-top:22px;padding-top:14px;border-top:1px solid var(--line-soft);
+  font-size:11.5px;font-weight:500;letter-spacing:.08em;color:var(--body);line-height:1.65}
 .rail .meas b{color:var(--mute);font-weight:600}
 
 /* main column */
@@ -125,7 +125,7 @@ body::after{
 .prose{max-width:700px}
 
 /* ---------- hero opener ---------- */
-.opener{min-height:90vh;display:flex;flex-direction:column;justify-content:center;
+.opener{min-height:72vh;display:flex;flex-direction:column;justify-content:center;
   padding:112px 0 56px}
 .eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:13px;font-weight:500;
   letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin:0 0 34px}
@@ -167,7 +167,14 @@ h1 .grad{
 .horizon .next .arr{animation:bob 2.2s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
 
-@media(max-width:880px){
+@media(min-width:1400px){
+  .page{max-width:min(100% - 64px, 1500px)}
+  .layout{grid-template-columns:220px minmax(0, 760px) 220px;column-gap:clamp(40px, 4vw, 72px);justify-content:center}
+  .rail{grid-column:1}
+  .main{grid-column:2}
+}
+
+@media(max-width:980px){
   .layout{grid-template-columns:1fr}
   .rail{display:none}
   .opener{min-height:auto;padding-top:64px}
@@ -181,7 +188,7 @@ h1 .grad{
 }
 
 /* ---------- placed editorial prose (verbatim copy, styled on the system) ---------- */
-.sec{padding:18px 0 10px;scroll-margin-top:80px;position:relative}
+.sec{padding:32px 0 56px;scroll-margin-top:80px;position:relative}
 .sec-intro{padding-top:0}
 .secbody{max-width:680px}
 .sec-intro .secbody{margin-top:6px}
@@ -251,7 +258,6 @@ footer{margin-top:40px;border-top:1px solid var(--line-soft);padding:64px 0 80px
    drawn in the page's own language: near-black ground, amber baseline,
    Space Mono labels, Space Grotesk numerals. no card, no pills, no badge.
    =================================================================== */
-.sec{padding-top:48px;padding-bottom:92px}
 .figray{margin:6px 0 0;padding:30px 0 6px;border-top:1px solid transparent;
   border-image:linear-gradient(90deg,rgba(251,113,133,.45),rgba(168,85,247,.28) 58%,transparent) 1;position:relative}
 .figcap{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;
@@ -358,3 +364,8 @@ footer{margin-top:40px;border-top:1px solid var(--line-soft);padding:64px 0 80px
 
 /* markdown reconciliation */
 .secbody > p:not(.eyebrow){font-size:18px;line-height:1.72;color:var(--body);margin:0 0 22px;max-width:680px;text-wrap:pretty}
+
+@media(min-width:1400px){
+  .prose,.secbody{max-width:760px}
+  .bp,.bl,.code,.aslot,.secbody > p:not(.eyebrow){max-width:760px}
+}
