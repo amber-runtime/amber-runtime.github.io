@@ -1,10 +1,10 @@
 ---
-id: "fits"
-order: 4
-num: "04"
-label: "Where Amber fits"
-screenLabel: "Where Amber fits"
-title: "Where Amber fits"
+id: "amber-walkthrough"
+order: 3
+num: "03"
+label: "Amber Walkthrough"
+screenLabel: "Amber Walkthrough"
+title: "Amber Walkthrough"
 ---
 Amber fills the gap that the existing tools leave open. For developers who want self-hosted durable execution without adding bulky infrastructure, Amber builds on DBOS. DBOS is a durable execution engine that runs embedded in the developer's application, and relies on Postgres alone for persistence and recovery. Nothing else has to be deployed or run alongside the application.
 

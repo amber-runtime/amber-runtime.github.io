@@ -1,8 +1,8 @@
 ---
 id: "built"
-order: 5
-num: "05"
-label: "How we built it"
+order: 4
+num: "04"
+label: "How we built Amber"
 screenLabel: "How we built Amber"
 title: "How we built Amber"
 ---

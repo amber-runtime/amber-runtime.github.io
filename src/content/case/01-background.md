@@ -8,40 +8,68 @@ title: "Background"
 ---
 <h3 class="sh" id="failure-in-production">Failure in Production</h3>
 
-As AI agents move from local environments into production systems, they need reliability and observability. Once an agent runs in the cloud, its work spans APIs, databases, and multiple services. This makes failures inevitable. Restarting from scratch can mean repeating expensive agent runs and risking duplicated side effects.
+Production failure is a common reality of modern software. To satisfy increased user demand, applications often grow more distributed and asynchronous. This leads to more services, network boundaries, and opportunities for something to fail mid-execution. Restarting a service that crashes isn’t as safe as some might assume.
 
-Normal execution loses more than the active process when it crashes. It also loses in-memory state, awareness of which steps already ran, and which step should run next. Without a durable record of progress, the safest default is often to start over from the beginning.
-
-<h3 class="sh" id="what-is-durable-execution">What is Durable Execution?</h3>
-
-Unlike normal code execution, durable execution persists its progress as it runs and, after a crash, resumes from that saved progress rather than starting over. Conceptually, from the developer's point of view, the application's execution flow behaves as if the failure had never happened. To clarify though, durable execution does not imply that failures do not happen, or that they happen less.
-
-For example, consider code that executes a sequence of five steps where crashes can happen mid-operation at any step.
+This is a classic problem in distributed systems.
 
 <img src="img/amber-double-charge.svg" alt="A naive restart re-runs the charge step and charges the customer twice." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
+A process may complete part of its work successfully before a later step crashes. When this happens, the process can be stuck in limbo. There’s no preservation of what already happened or where it's safe to resume. Restarting from the beginning can cause real consequences like charging a payment twice.
+
+This is where durable execution comes in.
+
+<h3 class="sh" id="what-is-durable-execution">What is Durable Execution?</h3>
+
+Durable execution is built around workflows and steps that allow code to be replayed deterministically after failures.
+
+A workflow wraps the orchestration logic that defines a process. It represents the execution path and ensures the code can resume from where it left off rather than starting over.
+
+[diagram for workflow]
+
+Within a workflow are steps, which wrap operations whose results should be preserved across failures. Steps act as checkpoints in execution. When a step completes, the runtime stores its return value so progress can be recovered later. Steps can wrap operations such as API calls, database writes, or work that would be expensive or unsafe to repeat.
+
+[diagram for steps]
+
+Unlike normal code execution, durable execution persists workflow progress as it runs. If a failure happens, execution resumes from the last completed step instead of starting over. From the developer’s point of view, the application’s execution flow behaves as if the failure had never happened. In other words, durable execution does not make failures happen less; it makes them less consequential.
+
+For example, consider code that executes a sequence of five steps where crashes can happen mid-operation at any step.
+
+[diagram for durable execution]
+
 <h3 class="sh" id="why-this-matters-for-agents">Why this Matters for Agents?</h3>
 
-An agent is a software application that enables an LLM to direct the application's execution flow. Traditional software follows logic that the developer writes upfront. Agentic software leaves some decisions to the model at runtime by giving it context and a set of tools to choose from.
+Traditional workflows usually follow a predictable execution path that developers define ahead of time. Agents operate differently.
+
+An agent is an LLM driven system that reasons about a task, takes actions, and adapts based on results until it reaches a goal.
 
 <img src="img/amber-agent-loop.svg" alt="The agent loop: reason, take action, use tools, observe, repeating." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-This autonomy is what makes agents suited to open-ended tasks, where the steps to execute, their order, and even how many there will be cannot be reasonably determined in advance. A request like "fix this bug" does not map cleanly to a single known path. Rather than following a predetermined sequence, the agent reasons toward a goal, takes actions, and reacts to their results until it arrives at a solution.
+This autonomy is what makes agents suited to more open-ended tasks, in which the exact execution steps cannot be determined in advance. A request like "fix this bug" does not map easily to a predetermined sequence. Instead, an agent decides what actions to take, observes the results, and determines the next step as it works toward a solution.
 
-Not all agents require a durable execution runtime. Many coding agents run locally, are supervised by a developer, and can be re-prompted when they fail because conversation history preserves enough context. The need becomes sharper when agents move to cloud infrastructure, run unattended, produce consequential side effects, or spend significant time and money on model calls.
+[diagram of regular workflows vs agent workflows]
 
-Agents benefit most from durable execution when they share these characteristics:
+Although agents behave differently from traditional workflows, they still fit naturally within durable execution. Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once a step completes, the runtime stores its result so it can be recovered after a failure instead of being re-executed. This allows long running agent workflows to resume safely without repeating completed work.
 
-<ul class="bl">
-<li>Agents whose tool calls produce consequential external side effects</li>
-<li>Long-running, unattended agents</li>
-<li>Agents operating across distributed infrastructure, including multi-agent workflows across multiple servers</li>
-<li>Agents with costly model calls, for example video generation or large data processing</li>
-<li>Agents running at scale where failures are inevitable and retries are cumulatively expensive</li>
-</ul>
+[image of openai and cursor]
+
+This problem is already becoming relevant in practice. Coding agents like Cursor and ChatGPT Codex are increasingly running long lived workflows, and some are already adopting durable execution runtimes or building systems with similar guarantees [[2]](https://cursor.com/blog/cloud-agent-lessons)[[9]](https://temporal.io/blog/improving-java-sdk-codex-openai).
+
+However, recovery only solves part of the problem: developers still need to understand how an agent reached a particular outcome.
 
 <h3 class="sh" id="challenges-with-observability">Challenges with Observability</h3>
 
-When failures happen, developers need visibility into why an agent took certain actions and where the workflow stood when it failed. Existing tracing tools can show spans, tool calls, model input and output, token usage, and cost. Durable execution engines can show workflow state and recovery progress.
+Modern agent observability tools provide developers with visibility into agent behavior. They capture execution traces, model interactions, tool invocations, and token usage. This helps explain why an agent behaved a certain way.
 
-The challenge is that those views are usually split. A tracer may understand the agent but not the durable workflow. A durable execution engine may know which step recovered but not what the agent did inside that step. Amber is built around combining those two views: recovering the workflow while showing the agent behavior inside it.
+However, these systems are usually separate from the durable execution platforms.
+
+This separation becomes especially problematic during failure and recovery, when visibility matters most. When a durable workflow resumes after a crash, previously completed steps are skipped to preserve progress and avoid repeating work. As a result, when a trace resumes, it will be missing every span before the crash. This leaves the resumed traces incomplete. In other words, agent observability and durable execution frameworks are usually two separate record-keeping systems that are not linked.
+
+[diagram of difference between agent observability system and durable execution system]
+
+Thus one main challenge is integrating both systems so agents can get both durability and observability.
+
+An important aspect to integrating observability is preserving the structural hierarchy of agent traces. For long running, multi-agent workflows, determining which agents spawned a subagent or called a tool is critical to root-cause analysis and cost tracking.
+
+[diagram of what hierarchy looks like]
+
+In summary, durable execution is foundational to reliable long running agents, and we begin the next section, by comparing the existing durable execution platforms.

@@ -1,8 +1,8 @@
 ---
 id: "tradeoffs"
-order: 7
-num: "07"
-label: "Tradeoffs"
+order: 5
+num: "05"
+label: "Engineering Tradeoffs and Challenges"
 screenLabel: "Engineering Tradeoffs and Challenges"
 title: "Engineering Tradeoffs and Challenges"
 ---

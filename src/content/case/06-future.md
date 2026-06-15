@@ -1,10 +1,10 @@
 ---
 id: "future"
-order: 8
-num: "08"
-label: "Future work"
-screenLabel: "Potential Future Works"
-title: "Potential Future Works"
+order: 6
+num: "06"
+label: "Future Work"
+screenLabel: "Future Work"
+title: "Future Work"
 ---
 <ul class="bl">
 <li>Support for other agent frameworks</li>

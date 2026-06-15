@@ -14,13 +14,12 @@
   var secs=[
     {id:'intro',n:'00',name:'Introduction'},
     {id:'background',n:'01',name:'Background'},
-    {id:'agents',n:'02',name:'Agents'},
-    {id:'existing',n:'03',name:'Existing solutions'},
-    {id:'fits',n:'04',name:'Where Amber fits'},
-    {id:'built',n:'05',name:'How we built it'},
-    {id:'walkthrough',n:'06',name:'Walkthrough'},
-    {id:'tradeoffs',n:'07',name:'Tradeoffs'},
-    {id:'future',n:'08',name:'Future work'}
+    {id:'existing',n:'02',name:'Existing solutions'},
+    {id:'amber-walkthrough',n:'03',name:'Amber Walkthrough'},
+    {id:'built',n:'04',name:'How we built Amber'},
+    {id:'tradeoffs',n:'05',name:'Engineering Tradeoffs and Challenges'},
+    {id:'future',n:'06',name:'Future Work'},
+    {id:'references',n:'07',name:'References'}
   ];
   var now=document.querySelector('.minibar .now');
   var items=[].slice.call(document.querySelectorAll('.idx > li'));

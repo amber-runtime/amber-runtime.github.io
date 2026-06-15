@@ -223,6 +223,8 @@ h1 .grad{
 .bp strong{color:var(--bone);font-weight:600}
 .bp a,.bl a{color:var(--amber-lt);text-decoration:none;border-bottom:1px solid var(--line);word-break:break-word}
 .bp a:hover,.bl a:hover{border-color:var(--amber)}
+.secbody a{color:var(--amber-lt);text-decoration:none;border-bottom:1px solid var(--line);word-break:break-word}
+.secbody a:hover{border-color:var(--amber)}
 .bl{font-size:18px;line-height:1.7;color:var(--body);max-width:680px;margin:0 0 22px;padding-left:26px}
 .bl li{margin:0 0 10px;padding-left:4px}
 .bl li::marker{color:var(--amber);font-family:var(--mono);font-size:13px}
