@@ -6,23 +6,42 @@ label: "Existing solutions"
 screenLabel: "Existing solutions"
 title: "Existing solutions"
 ---
-<h3 class="sh">DIY</h3>
+Choosing a durable execution platform requires weighing three key factors:
+<ol>
+	<li>The first is how open the runtime is: some are fully open source, while others let you view the source code but restrict how it can be used, modified, or commercialized.</li>
+	<li>The second is whether you self-host the runtime or consume it as a managed cloud service.</li>
+	<li>The third is the infrastructure that each runtime requires to run, ranging from a single process backed by one database to a distributed cluster of services.</li>
+</ol>
+The first two matter most to teams with privacy or compliance needs that require execution to stay inside their own systems; the third drives the ongoing cost of running it there.
 
-Prior to these durable execution projects, developers had to figure out ways to handle workflow durability on their own. Home-grown solutions were often developed such as stateful queues or job handlers, database-stored state machines, and complex checkpointing code. As these systems grew more complex, this infrastructure code can become increasingly difficult to maintain, test, and make reliable.
+[image of DIY]
 
-It is important to note that DIY solutions are not necessarily "battle tested" to handle many different types of failures. Homegrown solutions often require more effort to reach the same level of resilience as a purpose-built platform, and may miss edge cases that dedicated systems already handle. Organizations might not be comfortable with critical business systems relying on unproven durability architecture.
+<h3 class="sh" id="diy">DIY</h3>
 
-<h3 class="sh">Temporal</h3>
+DIY suits teams that want full control and accept the implementation burden that comes with it. Handling workflow durability yourself means building the underlying infrastructure from components like stateful job queues, database-backed state machines, and checkpointing logic.
 
-Temporal is the open source fork of "Cadence", a project created at Uber. Uber is known to have a large-scale distributed micro-services architecture, with thousands of different micro-services. "Cadence" was their own internal project to add a layer of reliability to this infrastructure, and the founding team eventually forked it and founded Temporal. Temporal offers a hosted cloud platform for companies for developers that are seeking to add durable execution to their application logic. Because it is open source, it is possible to self-host a Temporal cluster, which can be important for organizations that have privacy and compliance concerns.
+As these systems grow, that infrastructure code becomes increasingly difficult to maintain, test, and keep reliable. DIY solutions are also not necessarily "battle tested” to handle many different types of failures. They often require more effort to reach the same level of resilience as a purpose‑built platform, and may miss edge cases that dedicated systems already handle.
 
-Coming from such a large, successful company like Uber, Temporal is a proven technology with real world results. However, there are some aspects which may not appeal to all developers. Code must be organized into two layers; deterministic code and code with side effects must be handled differently. Additionally, a Temporal cluster can be quite complicated to maintain, and, despite being open source, self-hosting may not be feasible for smaller organizations.
+[image of Temporal]
 
-<h3 class="sh">Inngest</h3>
+<h3 class="sh" id="temporal">Temporal</h3>
 
-Inngest was born to manage reliable background jobs and event-driven workflows in modern serverless architectures. Like Temporal, it offers a cloud service that manages durable execution state, but it simplifies the developer experience significantly: developers write ordinary async functions and wrap side-effecting logic in built-in step primitives. The step results are memoized on the platform, so functions can be interrupted and resumed without needing a deterministic/non-deterministic code split.
+Temporal is a general-purpose workflow engine with multi-language SDKs and a deep feature set, used by many large companies at scale. It is fully open source and can be self-hosted or run as a managed cloud service. Temporal is a proven technology with real world results.
 
-While the source code for Inngest is available, and self-hosting Inngest is possible, the license for the source code is not exactly open source. This lack of clarity may deter developers and organizations who are looking to self-host their durable execution environment. Organizations with concerns about privacy and data compliance may also find issues with relying on a cloud service.
+However, there are some aspects which may not appeal to all developers. Comparatively, Temporal demands the most significant restructuring of the codebase. Code must be organized around a stricter workflow model involving two layers. Deterministic code and code with side effects must be handled differently.
+
+Additionally, running Temporal requires operating a cluster of services, which can be a significant burden for a smaller team to self-host and maintain.
+
+[image of Inngest]
+<h3 class="sh" id="inngest">Inngest</h3>
+
+Inngest, like Temporal, offers a cloud service that manages durable execution, but it simplifies the developer experience significantly: developers write their workflow as a function and wrap any side‑effecting operation into a step. It also requires less infrastructure to run.
+
+One caveat is that durable execution lives in a system that runs alongside the application rather than within it. The system sits as a separate service that triggers and drives your functions, rather than something embedded in your own code. This is what makes it fit serverless and event-driven architectures so well but is awkward when your application isn't event-driven.
+
+While the source code for Inngest is available, and self hosting Inngest is possible, the license for the source code is not exactly open source. This lack of clarity may deter developers and organizations who are looking to self host their durable execution environment. Organizations with concerns about privacy and data compliance may also find issues with relying on a cloud service.
+
+While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations that want to self host for cost or compliance reasons do not have a simple solution that combines good developer experience and easy to manage infrastructure.
 
 <div class="aslot">
 <p class="atag">Placeholder · comparison table</p>
@@ -30,4 +49,8 @@ While the source code for Inngest is available, and self-hosting Inngest is poss
 <p class="ahint">[comparison table] from the draft</p>
 </div>
 
-While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations who value self-hosting their own platforms due to cost or compliance concerns do not have a ready solution that combines good developer experience and simple, easy-to-maintain infrastructure with a truly open source durable execution engine.
+Amber is fully open source and self-hosted on Amazon Web Services (AWS).
+
+It builds on DBOS, an open-source durable execution engine that runs embedded within the application rather than as a separate service, and relies on Postgres alone for infrastructure.
+
+While Amber does not yet support multiple agent frameworks, it offers native integration with the OpenAI Agents SDK, written in Python. We chose OpenAI Agents SDK as it's among the most widely adopted frameworks for building agents.
