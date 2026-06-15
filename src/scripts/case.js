@@ -13,7 +13,7 @@
 (function(){
   var secs=[
     {id:'intro',n:'00',name:'Introduction'},
-    {id:'durable',n:'01',name:'Durable execution'},
+    {id:'background',n:'01',name:'Background'},
     {id:'agents',n:'02',name:'Agents'},
     {id:'existing',n:'03',name:'Existing solutions'},
     {id:'fits',n:'04',name:'Where Amber fits'},
@@ -23,7 +23,7 @@
     {id:'future',n:'08',name:'Future work'}
   ];
   var now=document.querySelector('.minibar .now');
-  var items=[].slice.call(document.querySelectorAll('.idx li'));
+  var items=[].slice.call(document.querySelectorAll('.idx > li'));
   var cur=-1;
   function setActive(i){
     if(i===cur) return; cur=i;

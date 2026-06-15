@@ -27,12 +27,12 @@ Each section is one file in `src/content/case/`, ordered by filename. The frontm
 
 ```
 ---
-id: durable
+id: background
 order: 1
 num: "01"
-label: Durable execution
-screenLabel: What is Durable Execution?
-title: What is Durable Execution?
+label: Background
+screenLabel: Background
+title: Background
 ---
 Body prose as markdown paragraphs...
 ```
