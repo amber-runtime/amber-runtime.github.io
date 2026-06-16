@@ -20,32 +20,8 @@ Developers can use the CLI to run their durable agents locally during developmen
 
 Amber provides a simple Python SDK that serves as the entry point to durable execution. Developers import the Amber library and annotate their agent code to register their agent as a durable workflow. Behind those SDK decorators, Amber handles the work of checkpointing steps, recovering after failure, and integrating traces.
 
-```python
-from agents import Agent, function_tool
-from amber import register_agent, agent_runner, step
+<img src="img/amber-sdk-code.png" alt="Python SDK example showing an OpenAI Agents SDK research assistant registered as a durable Amber workflow." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-# wrap tools and external API calls with @step
-@function_tool
-@step()
-def search_web():
-    ...
-
-# declare agent with openai-agents sdk
-research_agent = Agent(
-    name="research-assistant",
-    instructions="""Search the web and synthesize
-	 	findings into a clear summary.""",
-    tools=[search_web],
-)
-
-# register agent as a durable Amber workflow
-@register_agent(name="research-assistant")
-async def research(topic: str) -> str:
-    return await agent_runner(
-        starting_agent=research_agent,
-        input=topic
-    )
-```
 For additional setup instructions and and SDK details see the amber-sdk README:
 [Link: amber-sdk-README](https://github.com/amber-runtime/amber/blob/main/sdk/README.md)
 
@@ -66,5 +42,4 @@ Amber also exposes the dashboard’s API through the CLI tool.
 [Same thing carousel or little video of using the cli to get workflows with claude. Placeholder for now]
 
 This allows the developers to manage and debug their agent workflows directly from the terminal. They can even direct a coding agent to query agent workflows and debug on their behalf.
-
 
