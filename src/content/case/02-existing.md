@@ -14,17 +14,15 @@ Choosing a durable execution platform requires weighing three key factors:
 </ol>
 The first two matter most to teams with privacy or compliance needs that require execution to stay inside their own systems; the third drives the ongoing cost of running it there.
 
-[image of DIY]
-
 <h3 class="sh" id="diy">DIY</h3>
 
 DIY suits teams that want full control and accept the implementation burden that comes with it. Handling workflow durability yourself means building the underlying infrastructure from components like stateful job queues, database-backed state machines, and checkpointing logic.
 
 As these systems grow, that infrastructure code becomes increasingly difficult to maintain, test, and keep reliable. DIY solutions are also not necessarily "battle tested” to handle many different types of failures. They often require more effort to reach the same level of resilience as a purpose‑built platform, and may miss edge cases that dedicated systems already handle.
 
-[image of Temporal]
+<img src="img/Temporal_logo.png" alt="Temporal durable execution logo" style="display:block;width:100px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
-<h3 class="sh" id="temporal">Temporal</h3>
+<h3 class="sh" id="temporal" style="margin-top:0;">Temporal</h3>
 
 Temporal is a general-purpose workflow engine with multi-language SDKs and a deep feature set, used by many large companies at scale. It is fully open source and can be self-hosted or run as a managed cloud service. Temporal is a proven technology with real world results.
 
@@ -32,8 +30,9 @@ However, there are some aspects which may not appeal to all developers. Comparat
 
 Additionally, running Temporal requires operating a cluster of services, which can be a significant burden for a smaller team to self-host and maintain.
 
-[image of Inngest]
-<h3 class="sh" id="inngest">Inngest</h3>
+<img src="img/inngest_inc_logo.png" alt="Inngest logo" style="display:inline-block;width:100px;height:100px;object-fit:contain;vertical-align:middle;margin:0 .5rem 0 0;">
+
+<h3 class="sh" id="inngest" style="margin-top:0;">Inngest</h3>
 
 Inngest, like Temporal, offers a cloud service that manages durable execution, but it simplifies the developer experience significantly: developers write their workflow as a function and wrap any side‑effecting operation into a step. It also requires less infrastructure to run.
 
