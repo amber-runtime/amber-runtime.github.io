@@ -50,7 +50,7 @@ This autonomy is what makes agents suited to more open-ended tasks, in which the
 
 Although agents behave differently from traditional workflows, they still fit naturally within durable execution. Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once a step completes, the runtime stores its result so it can be recovered after a failure instead of being re-executed. This allows long running agent workflows to resume safely without repeating completed work.
 
-[image of openai and cursor]
+<img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
 This problem is already becoming relevant in practice. Coding agents like Cursor and ChatGPT Codex are increasingly running long lived workflows, and some are already adopting durable execution runtimes or building systems with similar guarantees [[2]](https://cursor.com/blog/cloud-agent-lessons)[[9]](https://temporal.io/blog/improving-java-sdk-codex-openai).
 

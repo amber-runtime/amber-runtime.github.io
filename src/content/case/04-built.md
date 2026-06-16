@@ -29,7 +29,7 @@ Early in Amber’s design, we debated whether to build our own durable execution
 
 At first, we considered building our own durable execution engine. However, we realized this would add significant complexity and slow development. Building a reliable durable execution system is hard. It requires solving difficult distributed systems problems. Since proven solutions already existed, we decided to evaluate existing technologies instead.
 
-[image of DBOS logo]
+<img src="img/DBOS.svg" alt="DBOS logo" style="display:block;width:200px;height:150px;object-fit:contain;margin:0 0 .5rem 0;">
 
 We ended up selecting DBOS because it aligned with Amber’s goal of keeping the architecture simple. DBOS runs directly inside the developer’s application and only requires a Postgres database for durability and queue-backed execution. Workflow state, queueing, and observability data could all live in one place. This simplified Amber’s architecture and reduced the infrastructure developers needed to manage.
 
@@ -59,7 +59,7 @@ To make the AWS architecture easier to understand, we break it down into its maj
 
 <h3 class="sh" id="self-hosted-aws-deployment">Self-hosted AWS Deployment</h3>
 
-<img src="img/aws_logo.png" alt="aws logo" style="display:block;width:100px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
+<img src="img/aws_logo.png" alt="aws logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
 To simplify deployment, we built the Amber CLI to provision the required infrastructure and deploy the application runtime in a couple of commands.
 
