@@ -47,3 +47,81 @@
   },{rootMargin:'0px 0px -22% 0px',threshold:0.02});
   [].slice.call(document.querySelectorAll('.sec')).forEach(function(s){ litIo.observe(s); });
 })();
+
+/* ===================== reusable screenshot carousels ===================== */
+(function(){
+  var carousels=[].slice.call(document.querySelectorAll('[data-carousel]'));
+  carousels.forEach(function(carousel){
+    var slides=[].slice.call(carousel.querySelectorAll('[data-carousel-slide]'));
+    var dots=[].slice.call(carousel.querySelectorAll('[data-carousel-dot]'));
+    var prev=carousel.querySelector('[data-carousel-prev]');
+    var next=carousel.querySelector('[data-carousel-next]');
+    var cur=0;
+
+    if(!slides.length) return;
+
+    function show(i){
+      cur=(i+slides.length)%slides.length;
+      slides.forEach(function(slide,idx){
+        var active=idx===cur;
+        slide.classList.toggle('is-active',active);
+        slide.setAttribute('aria-hidden',active?'false':'true');
+      });
+      dots.forEach(function(dot,idx){
+        var active=idx===cur;
+        dot.classList.toggle('is-active',active);
+        dot.setAttribute('aria-current',active?'true':'false');
+      });
+    }
+
+    if(prev) prev.addEventListener('click',function(){ show(cur-1); });
+    if(next) next.addEventListener('click',function(){ show(cur+1); });
+    dots.forEach(function(dot,idx){
+      dot.addEventListener('click',function(){ show(idx); });
+    });
+
+    show(0);
+  });
+})();
+
+/* ===================== image lightbox ===================== */
+(function(){
+  var imgs=[].slice.call(document.querySelectorAll('.case-carousel__frame img'));
+  if(!imgs.length) return;
+
+  var lightbox=document.createElement('div');
+  lightbox.className='image-lightbox';
+  lightbox.setAttribute('role','dialog');
+  lightbox.setAttribute('aria-modal','true');
+  lightbox.setAttribute('aria-label','Fullscreen screenshot');
+  lightbox.innerHTML='<button class="image-lightbox__close" type="button" aria-label="Close fullscreen image">&times;</button><img class="image-lightbox__img" alt="">';
+  document.body.appendChild(lightbox);
+
+  var close=lightbox.querySelector('.image-lightbox__close');
+  var full=lightbox.querySelector('.image-lightbox__img');
+
+  function open(img){
+    full.src=img.currentSrc||img.src;
+    full.alt=img.alt||'';
+    lightbox.classList.add('is-open');
+    document.body.classList.add('lightbox-open');
+    close.focus();
+  }
+
+  function hide(){
+    lightbox.classList.remove('is-open');
+    document.body.classList.remove('lightbox-open');
+    full.removeAttribute('src');
+  }
+
+  imgs.forEach(function(img){
+    img.addEventListener('click',function(){ open(img); });
+  });
+  close.addEventListener('click',hide);
+  lightbox.addEventListener('click',function(e){
+    if(e.target===lightbox) hide();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&lightbox.classList.contains('is-open')) hide();
+  });
+})();
