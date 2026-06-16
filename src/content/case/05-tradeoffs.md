@@ -23,6 +23,8 @@ Another trade off is that Postgres becomes a larger dependency and possible bott
 
 We accepted these trade offs because they matched Amber’s goal of being a lightweight, self hosted durable execution platform with minimal infrastructure while still providing rich agent observability.
 
+<img src="img/phoenix.svg" alt="Image of Phoenix vs OpenAI TracingProcessor API." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
+
 <h3 class="sh" id="agent-tracing-and-observability">Agent Tracing and Observability</h3>
 
 [Placeholder image for phoenix and openai]
