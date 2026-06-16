@@ -28,9 +28,3 @@ Amber only supports OpenAI Agents SDK. This decision allowed us to focus on buil
 
 In the future, we plan to expand support for additional agent frameworks. This will give developers more flexibility on how they build their agents and allow Amber to be framework agnostic.
 
-
-<ul class="bl">
-<li>CLI refinement</li>
-<li>RBAC and user auth refinement</li>
-<li>Durable pause for human-in-loop</li>
-</ul>
