@@ -12,7 +12,7 @@ Production failure is a common reality of modern software. To satisfy increased 
 
 This is a classic problem in distributed systems.
 
-<img src="img/amber-double-charge.svg" alt="A naive restart re-runs the charge step and charges the customer twice." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="img/double-charge.svg" alt="A naive restart re-runs the charge step and charges the customer twice." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 A process may complete part of its work successfully before a later step crashes. When this happens, the process can be stuck in limbo. There’s no preservation of what already happened or where it's safe to resume. Restarting from the beginning can cause real consequences like charging a payment twice.
 
