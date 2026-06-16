@@ -125,3 +125,46 @@
     if(e.key==='Escape'&&lightbox.classList.contains('is-open')) hide();
   });
 })();
+
+/* ===== Normal vs durable execution animation ===== */
+(function(){
+  const track=document.getElementById('abtrack');
+  if(!track) return;
+  const steps=[...track.querySelectorAll('.tstep')];
+  const read=document.getElementById('abread');
+  const run=document.getElementById('abrun');
+  const toggle=document.getElementById('abtoggle');
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+  let mode='plain';
+
+  function reset(){ steps.forEach(s=>s.className='tstep'); read.innerHTML='Pick a mode, then simulate a crash mid-operation.'; }
+
+  toggle.addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    [...toggle.children].forEach(x=>x.classList.remove('active'));
+    b.classList.add('active'); mode=b.dataset.mode; reset();
+  });
+
+  async function play(){
+    run.disabled=true; reset();
+    for(let k=0;k<2;k++){ steps[k].classList.add('running'); await sleep(360); steps[k].classList.remove('running'); steps[k].classList.add('done'); }
+    steps[2].classList.add('running'); await sleep(420);
+    steps[2].classList.remove('running'); steps[2].classList.add('crashpt');
+    read.innerHTML='<span class="bad">✕ crash mid-operation at step 3.</span>'; await sleep(680);
+
+    if(mode==='plain'){
+      steps.forEach(s=>s.className='tstep');
+      for(let k=0;k<2;k++){ steps[k].classList.add('wasted'); await sleep(240); }
+      read.innerHTML='<span class="bad">In normal execution, completed work is discarded, retries starts over from scratch</span>';
+    } else {
+      for(let k=0;k<2;k++){ steps[k].className='tstep preserved'; await sleep(200); }
+      steps[2].className='tstep'; steps[3].className='tstep'; steps[4].className='tstep';
+      read.innerHTML='In durable execution, work is preserved each step, retries can resume from the last successfully recorded step.';
+      await sleep(520);
+      for(let k=2;k<5;k++){ steps[k].classList.add('running'); await sleep(360); steps[k].classList.remove('running'); steps[k].classList.add('done'); }
+    }
+    run.disabled=false;
+  }
+  run.addEventListener('click',play);
+})();

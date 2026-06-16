@@ -34,7 +34,31 @@ Unlike normal code execution, durable execution persists workflow progress as it
 
 For example, consider code that executes a sequence of five steps where crashes can happen mid-operation at any step.
 
-[diagram for durable execution]
+<div class="de-anim">
+  <div class="panel" id="abpanel">
+    <div class="ptitle">
+      <span>Normal vs durable execution</span>
+      <div class="seg-toggle" id="abtoggle">
+        <button class="active" data-mode="plain">Normal execution</button>
+        <button data-mode="amber">Durable execution</button>
+      </div>
+    </div>
+    <div class="track" id="abtrack">
+      <div class="tstep" data-i="1"><span class="n">step 1</span></div>
+      <div class="tstep" data-i="2"><span class="n">step 2</span></div>
+      <div class="tstep" data-i="3"><span class="n">step 3</span></div>
+      <div class="tstep" data-i="4"><span class="n">step 4</span></div>
+      <div class="tstep" data-i="5"><span class="n">step 5</span></div>
+    </div>
+    <div class="de-legend">
+      <span class="lg"><i class="sw kept"></i>preserved</span>
+      <span class="lg"><i class="sw done"></i>completed</span>
+      <span class="lg"><i class="sw lost"></i>discarded</span>
+    </div>
+    <p class="ab-readout" id="abread">Pick a mode, then simulate a crash mid-operation.</p>
+    <button class="btn crash" id="abrun">&#8635; simulate crash</button>
+  </div>
+</div>
 
 <h3 class="sh" id="why-this-matters-for-agents">Why this Matters for Agents?</h3>
 
