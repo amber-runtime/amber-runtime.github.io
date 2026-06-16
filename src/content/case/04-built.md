@@ -59,7 +59,7 @@ To make the AWS architecture easier to understand, we break it down into its maj
 
 <h3 class="sh" id="self-hosted-aws-deployment">Self-hosted AWS Deployment</h3>
 
-[AWS logo]
+<img src="img/aws_logo.png" alt="aws logo" style="display:block;width:100px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
 To simplify deployment, we built the Amber CLI to provision the required infrastructure and deploy the application runtime in a couple of commands.
 

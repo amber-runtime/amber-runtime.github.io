@@ -20,7 +20,7 @@ Developers can use the CLI to run their durable agents locally during developmen
 
 Amber provides a simple Python SDK that serves as the entry point to durable execution. Developers import the Amber library and annotate their agent code to register their agent as a durable workflow. Behind those SDK decorators, Amber handles the work of checkpointing steps, recovering after failure, and integrating traces.
 
-<img src="img/amber-sdk-code.png" alt="Python SDK example showing an OpenAI Agents SDK research assistant registered as a durable Amber workflow." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="img/amber-sdk-code.png" alt="Python SDK example showing an OpenAI Agents SDK research assistant registered as a durable Amber workflow." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
 For additional setup instructions and and SDK details see the amber-sdk README:
 [Link: amber-sdk-README](https://github.com/amber-runtime/amber/blob/main/sdk/README.md)

@@ -7,10 +7,7 @@ screenLabel: "Engineering Tradeoffs and Challenges"
 title: "Engineering Tradeoffs and Challenges"
 ---
 <h3 class="sh" id="tradeoffs-durable-execution-engine">Durable Execution Engine</h3>
-<div class="aslot">
-<p class="atag">Placeholder · diagram</p>
-<p class="awhat">[Possibly add a diagram showing what the architecture with lambda could have looked like?] [Or very small one just showing you would need AWS SQS vs only Postgres]</p>
-</div>
+<img src="img/DBOS_vs_Lambda.svg" alt="Image of dbos vs aws lambda." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
 The two main options we considered were AWS Durable Lambdas and DBOS Transact. Since Amber’s infrastructure already relied on AWS services, AWS Durable Lambdas seemed like a natural fit. Durable Lambdas support long running workflows without the 15 minute limit of standard AWS Lambda functions, which made them an attractive option.
 
