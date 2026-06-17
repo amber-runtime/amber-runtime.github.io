@@ -90,7 +90,7 @@ However, these systems are usually separate from the durable execution platforms
 
 This separation becomes especially problematic during failure and recovery, when visibility matters most. When a durable workflow resumes after a crash, previously completed steps are skipped to preserve progress and avoid repeating work. As a result, when a trace resumes, it will be missing every span before the crash. This leaves the resumed traces incomplete. In other words, agent observability and durable execution frameworks are usually two separate record-keeping systems that are not linked.
 
-[diagram of difference between agent observability system and durable execution system]
+<img src="img/observability_durable.svg" style="width:100%">
 
 Thus one main challenge is integrating both systems so agents can get both durability and observability.
 
