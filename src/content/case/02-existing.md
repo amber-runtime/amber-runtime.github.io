@@ -42,11 +42,7 @@ While the source code for Inngest is available, and self hosting Inngest is poss
 
 While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations that want to self host for cost or compliance reasons do not have a simple solution that combines good developer experience and easy to manage infrastructure.
 
-<div class="aslot">
-<p class="atag">Placeholder · comparison table</p>
-<p class="awhat">Open Source · Self Hosted · Dev Experience · Easy to set up</p>
-<p class="ahint">[comparison table] from the draft</p>
-</div>
+<img src="img/existing-solutions.svg" alt="Existing solutions table">
 
 Amber is fully open source and self-hosted on Amazon Web Services (AWS).
 

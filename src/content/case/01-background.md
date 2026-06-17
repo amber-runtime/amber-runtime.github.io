@@ -24,11 +24,11 @@ Durable execution is built around workflows and steps that allow code to be repl
 
 A workflow wraps the orchestration logic that defines a process. It represents the execution path and ensures the code can resume from where it left off rather than starting over.
 
-[diagram for workflow]
+<img src="img/workflow.svg" alt="A workflow is composed of steps" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Within a workflow are steps, which wrap operations whose results should be preserved across failures. Steps act as checkpoints in execution. When a step completes, the runtime stores its return value so progress can be recovered later. Steps can wrap operations such as API calls, database writes, or work that would be expensive or unsafe to repeat.
 
-[diagram for steps]
+<img src="img/steps.svg" alt="Completed steps are check-pointed" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Unlike normal code execution, durable execution persists workflow progress as it runs. If a failure happens, execution resumes from the last completed step instead of starting over. From the developer’s point of view, the application’s execution flow behaves as if the failure had never happened. In other words, durable execution does not make failures happen less; it makes them less consequential.
 
