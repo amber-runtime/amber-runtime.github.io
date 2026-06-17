@@ -10,7 +10,7 @@ title: "How we built Amber"
 
 To better understand how we built Amber, we start by presenting a high level overview of the components of Amber.
 
-[Diagram of the 5 components]
+<img src="img/aws-highlevel.svg" alt="High level look of Amber components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Amber is composed of five main subsystems:
 <ol class="bl">
