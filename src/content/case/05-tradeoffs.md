@@ -42,7 +42,7 @@ As a result, we decided to drop OpenInference entirely and collect traces direct
 The main trade off of this decision is that Amber’s tracing is more tightly coupled to the OpenAI Agents SDK, making support for other frameworks more limited. We accepted this trade off because it simplified our codebase, removed an unnecessary dependency, and provided cleaner agent-aware observability within Amber’s dashboard.
 
 <h3 class="sh" id="embedded-sdk-architecture-vs-separate-runtime-server">Embedded SDK Architecture vs Separate Runtime Server</h3>
-<img src="img/amber-embedded-vs-runtime.svg" alt="The embedded SDK avoids the extra network hop of a separate runtime server." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="img/embedded_sdk.svg" alt="The embedded SDK avoids the extra network hop of a separate runtime server." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Our initial product decision was to have the developers host their agents on a runtime server that Amber would provide. The goal was to abstract away the durable execution runtime and manage it on the developer's behalf. However, we soon realized that most developers already have their own applications, and requiring them to shape their application around our runtime created unnecessary friction. Additionally, most developers are not bringing standalone agent files without an existing application.
 
