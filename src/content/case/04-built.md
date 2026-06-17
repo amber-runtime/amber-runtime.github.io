@@ -42,6 +42,8 @@ Workflow state, queueing, and observability data could all live in one place. Th
 
 Originally, Amber supported both immediate and queued workflow execution. However, requiring developers to choose between execution models added unnecessary complexity. Since Amber primarily targets long running agent workflows that may pause, fail, or resume, we standardized on queued execution.
 
+<img src="img/enqueue-workflow.svg" alt="Diagram of agents writing to a queue on postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+
 As a result, Amber separates request handling from long running agent execution. The developer’s application service running in AWS ECS accepts requests and enqueues agent workflows in Postgres. A dedicated worker service in AWS ECS then drains the queue and performs the long running work. This removes the need for a separate queueing system like AWS SQS.
 
 This separation allows the application service and worker runtime to scale independently based on their own traffic patterns.
