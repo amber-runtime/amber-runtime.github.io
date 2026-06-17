@@ -66,11 +66,11 @@ Workflows follow a predictable execution path that developers define ahead of ti
 
 An agent is an LLM driven system that reasons about a task, takes actions, and adapts based on results until it reaches a goal.
 
-<img src="img/amber-agent-loop.svg" alt="The agent loop: reason, take action, use tools, observe, repeating." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="img/agent-loop.svg" alt="The agent loop: reason, take action, use tools, observe, repeating." style="display:block;width:65%;height:auto;margin:1.5rem auto;">
 
 This autonomy is what makes agents suited to more open-ended tasks, in which the exact execution steps cannot be determined in advance. A request like "fix this bug" does not map easily to a predetermined sequence. Instead, an agent decides what actions to take, observes the results, and determines the next step as it works toward a solution.
 
-[diagram of regular workflows vs agent workflows]
+<img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
 Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once a LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long running agents to resume safely without repeating completed work.
 
