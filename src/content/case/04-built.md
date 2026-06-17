@@ -25,15 +25,13 @@ Together, these let developers define AI agents in their application code while 
 
 <h3 class="sh" id="durable-execution-engine">Durable Execution Engine</h3>
 
-Early in Amber’s design, we debated whether to build our own durable execution system or adopt an existing solution.
-
-At first, we considered building our own durable execution engine. However, we realized this would add significant complexity and slow development. Building a reliable durable execution system is hard. It requires solving difficult distributed systems problems. Since proven solutions already existed, we decided to evaluate existing technologies instead.
-
 <img src="img/DBOS.svg" alt="DBOS logo" style="display:block;width:200px;height:150px;object-fit:contain;margin:0 0 .5rem 0;">
 
-We ended up selecting DBOS because it aligned with Amber’s goal of keeping the architecture simple. DBOS runs directly inside the developer’s application and only requires a Postgres database for durability and queue-backed execution. Workflow state, queueing, and observability data could all live in one place. This simplified Amber’s architecture and reduced the infrastructure developers needed to manage.
+Early in Amber’s design, we debated whether to build our own durable execution system or adopt an existing solution.
 
-DBOS’s queue backed execution model also influenced how we structured Amber’s runtime architecture. Since workflows could be persisted and executed asynchronously, we needed to decide how agent execution should be handled.
+We ended up selecting DBOS because it aligned with Amber’s goal of keeping the architecture simple. DBOS runs directly inside the developer’s application and only requires a Postgres database for durability. Instead of relying on a separate queueing system, DBOS uses Postgres itself to persist and schedule workflow execution.
+
+Workflow state, queueing, and observability data could all live in one place. This simplified Amber’s architecture and reduced the infrastructure developers needed to manage.
 
 <div class="aslot">
 <p class="atag">Placeholder · diagram</p>
@@ -44,7 +42,7 @@ DBOS’s queue backed execution model also influenced how we structured Amber’
 
 Originally, Amber supported both immediate and queued workflow execution. However, requiring developers to choose between execution models added unnecessary complexity. Since Amber primarily targets long running agent workflows that may pause, fail, or resume, we standardized on queued execution.
 
-As a result, Amber separates request handling from agent execution through a queue backed execution model. The developer’s application service running in AWS ECS accepts requests and enqueues agent workflows in Postgres. A dedicated worker service in AWS ECS then drains the queue and performs the long running work. This removes the need for a separate queueing system like AWS SQS.
+As a result, Amber separates request handling from long running agent execution. The developer’s application service running in AWS ECS accepts requests and enqueues agent workflows in Postgres. A dedicated worker service in AWS ECS then drains the queue and performs the long running work. This removes the need for a separate queueing system like AWS SQS.
 
 This separation allows the application service and worker runtime to scale independently based on their own traffic patterns.
 

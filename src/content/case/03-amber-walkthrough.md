@@ -27,7 +27,7 @@ For additional setup instructions and and SDK details see the amber-sdk README:
 
 <h3 class="sh" id="dashboard">Dashboard</h3>
 
-Amber provides a dashboard for managing and debugging durable workflows.
+Amber provides a dashboard for managing and debugging durable workflows. The dashboard allows for agent-specific tracing by using OpenAI Agent SDK’s own TracingProcessor API.
 
 <div class="case-carousel" data-carousel aria-label="Amber dashboard walkthrough">
   <div class="case-carousel__viewport">
@@ -88,9 +88,9 @@ Amber provides a dashboard for managing and debugging durable workflows.
   </div>
 </div>
 
-From a failed workflow, developers can inspect completed steps and fork from any previously completed step to replay part of the workflow. This allows developers to investigate failures without rerunning the entire workflow.
+From a failed workflow, developers can inspect completed steps and resume from any previously completed step to replay part of the workflow. This allows developers to investigate failures without rerunning the entire workflow.
 
-This capability makes debugging agent workflows on Amber closer to debugging traditional software. Developers can add logs, make code changes, and replay failed sections to understand what went wrong.
+Developers can add logs, make code changes, and replay failed sections to understand what went wrong.
 
 <h3 class="sh" id="cli">CLI</h3>
 

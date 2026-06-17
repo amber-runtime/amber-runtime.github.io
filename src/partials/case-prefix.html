@@ -106,7 +106,7 @@
         </div>
       </div>
       <div class="secbody">
-        <p class="bp">As AI agents move from local environments into production systems, they need reliability and observability. Once an agent runs in the cloud, its work spans APIs, databases, and multiple services. This makes failures inevitable. Restarting from scratch can mean repeating expensive agent runs and risking duplicated side effects. When failures happen, visibility is needed to explain why an agent took certain actions.</p>
+        <p class="bp">As AI agents become longer running, they need reliability and observability. Once an agent’s work spans hours or days this makes failures inevitable. Restarting from the first step can mean repeating expensive agent runs and risking duplicated side effects. </p>
         <p class="bp">Amber addresses this need by preserving an agent’s progress, resuming its work after a failure, and integrating agent specific observability.</p>
         <p class="bp">In this case study, we introduce how durable execution applies to AI agents, compare existing durable execution solutions, and discuss how we addressed agent-specific challenges while building Amber.</p>
         <img src="img/amber-hero-minimal.svg" alt="Without Amber an agent restarts from the beginning after a crash; with Amber it resumes from the last saved step." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
