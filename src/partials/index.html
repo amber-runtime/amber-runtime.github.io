@@ -137,61 +137,24 @@ img.deer{display:block;width:auto;flex:none}
 .sec-lede{font-size:18px;line-height:1.65;color:var(--body);max-width:56ch;margin:0;text-wrap:pretty}
 .sec-lede strong{color:var(--bone);font-weight:600}
 
-/* ---------- signature: draggable before / after ---------- */
+/* ---------- signature: SDK snippet ---------- */
 .sec-lede code{font-family:var(--mono);font-size:.86em;color:var(--amber-lt);
   background:var(--amber-wash);border:1px solid var(--line);border-radius:5px;padding:1px 7px}
-.cmp{position:relative;margin:40px 0 18px;height:clamp(560px,72vh,656px);
-  border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:#0b0b0d;
-  box-shadow:0 40px 90px -50px rgba(0,0,0,.9);user-select:none;touch-action:none}
-.cmp-side{position:absolute;inset:0;overflow:hidden}
-.cmp-pad{position:absolute;inset:0;padding:54px 30px 26px;min-width:760px}
-.cmp-tag{position:absolute;top:18px;font-family:var(--mono);font-size:11.5px;font-weight:600;
-  letter-spacing:.2em;text-transform:uppercase;z-index:6}
-.cmp-tag .sub{display:block;font-size:10px;font-weight:500;letter-spacing:.12em;margin-top:4px;opacity:.7}
-/* BEFORE — left, neutral infra */
-.cmp-before{background:
-  linear-gradient(180deg,rgba(255,255,255,.018),transparent 40%),#0b0b0d;
-  clip-path:inset(0 calc(100% - var(--pos,72%)) 0 0)}
-.cmp-before .cmp-tag{left:30px;color:var(--slate-lt)}
-/* AFTER — right, amber resolution */
-.cmp-after{background:
-  radial-gradient(700px 460px at 100% 0%, rgba(245,158,11,.14), transparent 64%),
-  linear-gradient(180deg,rgba(245,158,11,.05),rgba(245,158,11,.015) 50%,transparent),#0c0a07;
-  clip-path:inset(0 0 0 var(--pos,72%))}
-.cmp-after .cmp-pad{left:auto;right:0;min-width:560px}
-.cmp-after .cmp-tag{right:30px;color:var(--amber)}
-.cmp-code{margin:0;font-family:var(--mono);font-size:13px;line-height:1.5;color:var(--bone-dim);
-  white-space:pre;tab-size:2}
-.cmp-after .cmp-code{font-size:15px;line-height:1.62}
+/* single SDK snippet panel — no clip, no drag */
+.cmp-code{width:max-content;max-width:100%;margin:40px 0 18px;
+  font-family:var(--mono);font-size:14px;line-height:1.62;color:var(--bone-dim);
+  white-space:pre;tab-size:2;overflow-x:auto;
+  background:linear-gradient(180deg,rgba(245,158,11,.04),transparent 60%),#0c0a07;
+  border:1px solid var(--edge);border-radius:14px;
+  box-shadow:0 40px 90px -50px rgba(0,0,0,.9);padding:30px 32px}
 .cmp-code .c{color:var(--faint);font-style:italic}
 .cmp-code .kw{color:var(--mute)}
-.cmp-code .plumb{color:var(--slate-lt)}
 .cmp-code .dec{color:var(--amber);font-weight:600}
 .cmp-code .str{color:var(--emerald-lt)}
-/* divider + handle */
-.cmp-handle{position:absolute;top:0;bottom:0;left:var(--pos,72%);width:2px;z-index:8;
-  background:linear-gradient(180deg,rgba(245,158,11,.2),var(--amber),rgba(245,158,11,.2));
-  transform:translateX(-50%);cursor:ew-resize}
-.cmp-grab{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  width:46px;height:46px;border-radius:50%;background:var(--bone);color:#1a1205;
-  display:flex;align-items:center;justify-content:center;cursor:ew-resize;
-  box-shadow:0 6px 22px rgba(0,0,0,.55),0 0 0 6px rgba(245,158,11,.16);
-  font-family:var(--mono);font-size:15px;font-weight:700;letter-spacing:-.05em}
-.cmp-grab:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
-.cmp-hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:7;
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--faint);white-space:nowrap;transition:opacity .3s}
-.cmp.touched .cmp-hint{opacity:0}
 .cmp-foot{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12.5px;
   letter-spacing:.03em;color:var(--mute);margin:2px 2px 0}
 .cmp-foot b{color:var(--amber-lt);font-weight:600}
 .cmp-foot .dot{width:5px;height:5px;border-radius:50%;background:var(--amber)}
-@media(max-width:880px){
-  .cmp{height:clamp(470px,108vw,580px)}
-  .cmp-code{font-size:11px}
-  .cmp-after .cmp-code{font-size:12.5px}
-  .cmp-pad{padding:48px 18px 22px;min-width:560px}
-}
 
 /* ---------- feature beats ---------- */
 .beat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,5vw,80px);align-items:center;
@@ -213,6 +176,7 @@ img.deer{display:block;width:auto;flex:none}
 /* visual cards */
 .card{border:1px solid var(--edge);border-radius:13px;background:#0c0c0e;overflow:hidden;
   box-shadow:0 30px 70px -45px rgba(0,0,0,.9)}
+.card-shot{display:block;width:100%;height:auto;border-radius:13px 13px 0 0}
 .card-bar{display:flex;align-items:center;gap:9px;height:38px;padding:0 14px;
   border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.02)}
 .card-bar .dots{display:flex;gap:6px}
@@ -399,67 +363,33 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
 <!-- ===================== SIGNATURE MOMENT ===================== -->
 <section class="section shell" id="signature">
   <p class="sec-eyebrow"><span class="n">01</span> The code</p>
-  <h2 class="sec-title">The crash-recovery code becomes a few decorators.</h2>
-  <p class="sec-lede">On the left is crash recovery written by hand: persist each step's output, detect that the process restarted, skip the steps already done, resume from the last one. <strong>Drag the handle right to left</strong> and all of it disappears. You mark each operation with <code>@step</code> and the agent with <code>@register_agent</code>. Underneath, DBOS checkpoints each step to Postgres, so a crash resumes from the last one that finished. Amber adds the observability and runs as a worker beside your app, with no separate orchestration service to stand up.</p>
+  <h2 class="sec-title">Crash recovery is a few decorators.</h2>
+  <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. To survive a crash you add two Amber decorators: <code>@register_agent</code> for the durable workflow, <code>@step</code> for the units inside it. It picks up from the last completed step rather than starting over.</p>
 
-  <div class="cmp" id="cmp" style="--pos:72%">
-    <!-- BEFORE: hand-rolled plumbing -->
-    <div class="cmp-side cmp-before">
-      <span class="cmp-tag">Before<span class="sub">by hand</span></span>
-      <div class="cmp-pad"><pre class="cmp-code"><span class="c"># persist every step, detect the restart, skip what</span>
-<span class="c"># finished, resume from the last one that did not.</span>
-<span class="kw">async def</span> research_agent(topic, run_id):
-    <span class="plumb">state = <span class="kw">await</span> db.load(run_id)</span>
-    <span class="plumb">done = state.get(<span class="str">"steps"</span>, {})</span>
+  <pre class="cmp-code"><span class="kw">from</span> agents <span class="kw">import</span> Agent, function_tool
+<span class="kw">from</span> amber <span class="kw">import</span> register_agent, agent_runner, step
 
-    <span class="plumb"><span class="kw">if</span> <span class="str">"search"</span> <span class="kw">not in</span> done:</span>
-        sources = <span class="kw">await</span> web.search(topic)
-        <span class="plumb">done[<span class="str">"search"</span>] = sources</span>
-        <span class="plumb"><span class="kw">await</span> db.save(run_id, <span class="str">"search"</span>, sources)</span>
-    <span class="plumb">sources = done[<span class="str">"search"</span>]</span>
+<span class="c"># wrap tools and external API calls with @step</span>
+<span class="dec">@function_tool</span>
+<span class="dec">@step</span>()
+<span class="kw">def</span> search_web(query: str) -> str:
+    ...
 
-    <span class="plumb"><span class="kw">if</span> <span class="str">"summarize"</span> <span class="kw">not in</span> done:</span>
-        notes = <span class="kw">await</span> llm.summarize(sources)
-        <span class="plumb">done[<span class="str">"summarize"</span>] = notes</span>
-        <span class="plumb"><span class="kw">await</span> db.save(run_id, <span class="str">"summarize"</span>, notes)</span>
-    <span class="plumb">notes = done[<span class="str">"summarize"</span>]</span>
+<span class="c"># declare the agent with the openai-agents sdk</span>
+research_agent = Agent(
+    name=<span class="str">"research-assistant"</span>,
+    instructions=<span class="str">"Search the web and synthesize findings into a clear summary."</span>,
+    tools=[search_web],
+)
 
-    <span class="plumb"><span class="kw">if</span> <span class="str">"write"</span> <span class="kw">not in</span> done:</span>
-        <span class="kw">await</span> db.write(topic, notes)
-        <span class="plumb">done[<span class="str">"write"</span>] = True</span>
-        <span class="plumb"><span class="kw">await</span> db.save(run_id, <span class="str">"write"</span>, True)</span>
-
-    <span class="kw">return</span> notes</pre></div>
-    </div>
-
-    <!-- AFTER: one decorator, body unchanged -->
-    <div class="cmp-side cmp-after">
-      <span class="cmp-tag">After<span class="sub">decorators</span></span>
-      <div class="cmp-pad"><pre class="cmp-code"><span class="c"># the same operations, marked as steps. the manual persistence is gone.</span>
-<span class="kw">from</span> amber <span class="kw">import</span> register_agent, step
-
-<span class="dec">@step</span>
-<span class="kw">async def</span> search(topic): ...
-<span class="dec">@step</span>
-<span class="kw">async def</span> summarize(sources): ...
-<span class="dec">@step</span>
-<span class="kw">async def</span> write(topic, notes): ...
-
-<span class="dec">@register_agent</span>(name=<span class="str">"research-agent"</span>)
-<span class="kw">async def</span> research_agent(topic):
-    sources = <span class="kw">await</span> search(topic)
-    notes = <span class="kw">await</span> summarize(sources)
-    <span class="kw">await</span> write(topic, notes)
-    <span class="kw">return</span> notes</pre></div>
-    </div>
-
-    <div class="cmp-hint">← drag to collapse the plumbing</div>
-    <div class="cmp-handle" id="cmpHandle">
-      <div class="cmp-grab" id="cmpGrab" role="slider" tabindex="0" aria-label="Reveal the decorated version" aria-valuemin="0" aria-valuemax="100" aria-valuenow="72">&lt;&nbsp;&gt;</div>
-    </div>
-  </div>
-
-  <p class="cmp-foot"><span class="dot"></span> Same operations, same logic. <b>The hand-written checkpoint-and-resume collapses into a few decorators you can read at a glance.</b></p>
+<span class="c"># register the agent as a durable Amber workflow</span>
+<span class="dec">@register_agent</span>(name=<span class="str">"research-assistant"</span>)
+<span class="kw">async def</span> research(topic: str) -> str:
+    result = <span class="kw">await</span> agent_runner(
+        starting_agent=research_agent,
+        input=topic,
+    )
+    <span class="kw">return</span> str(result.final_output)</pre>
 </section>
 
 <!-- ===================== FEATURE BEATS ===================== -->
@@ -493,34 +423,12 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
     <div class="beat-copy" style="max-width:60ch">
       <p class="sec-eyebrow"><span class="n">03</span> Observability</p>
       <h3 class="beat-h">The agent and the workflow, in one place.</h3>
-      <p>Existing tools see one half each: a tracer watches the agent, a durable engine watches the workflow. Amber puts both in one inspector, so you can read the agent trace and the recovery state side by side, the thing neither half can show on its own.</p>
+      <p>Existing tools see one half each: a tracer watches the agent, a durable engine watches the workflow. Amber puts both in one inspector, so one view covers the agent trace and the recovery state.</p>
     </div>
     <div class="beat-visual">
       <div class="card">
-        <div class="ph-tag"><span class="d"></span>placeholder · real dashboard screenshot</div>
-        <div class="card-bar"><span class="dots"><i></i><i></i><i></i></span><span class="ctitle">workflow a3f91 · research_agent</span><span class="pill pill-amber">recovered</span></div>
-        <div class="inspector">
-          <div class="insp-pane trace">
-            <p class="insp-head">Agent trace</p>
-            <div class="span"><span class="ico ok"></span><span class="nm">research_agent</span><span class="ok-tag">OK</span></div>
-            <div class="span indent"><span class="ico ok"></span><span class="nm">web.search</span><span class="meta">412ms</span></div>
-            <div class="span indent"><span class="ico ok"></span><span class="nm">llm.summarize</span><span class="meta">3,140 tok</span></div>
-            <div class="span indent"><span class="ico ok"></span><span class="nm">db.write</span><span class="meta">38ms</span></div>
-            <div class="span"><span class="ico ok"></span><span class="nm">return notes</span><span class="ok-tag">OK</span></div>
-          </div>
-          <div class="insp-pane state">
-            <p class="insp-head">Workflow state</p>
-            <div class="wf-row"><span class="l">status</span><span class="v amber">RECOVERED</span></div>
-            <div class="wf-row"><span class="l">attempts</span><span class="v">2</span></div>
-            <div class="wf-row"><span class="l">resumed&nbsp;at</span><span class="v">step 3 · db.write</span></div>
-            <div class="wf-row"><span class="l">steps&nbsp;preserved</span><span class="v amber">2</span></div>
-            <div class="recovered">
-              <span class="rb"></span>
-              <span class="rt"><b>Recovered</b>The trace reads clean end to end. The workflow was restarted once and kept two finished steps and resumed at the third.</span>
-            </div>
-          </div>
-          <div class="insp-foot">Read latency, tokens, and tool calls like any tracer. The difference is the workflow state beside them, which is what tells you the agent crashed and recovered when the trace alone reads clean.</div>
-        </div>
+        <img class="card-shot" src="assets/observability-inspector.png" alt="Amber dashboard inspector showing a recovered Research Assistant run">
+        <div class="insp-foot">The agent trace and the durable state for one run, including the retry that recovered it.</div>
       </div>
     </div>
   </section>
