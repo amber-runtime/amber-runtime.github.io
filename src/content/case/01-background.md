@@ -8,7 +8,7 @@ title: "Background"
 ---
 <h3 class="sh" id="failure-in-production">Failure in Production</h3>
 
-Production failure is a common reality of modern software. To satisfy increased user demand, applications often grow more distributed and asynchronous. This leads to more services, network boundaries, and opportunities for something to fail mid-execution. Restarting a service that crashes isn’t as safe as some might assume.
+When working with distributed systems there are various trade offs, one of which is handling state during a crash. When systems aren’t distributed, a failure can be kept in memory. But when a system is distributed you need something more than memory to help persist that state.
 
 This is a classic problem in distributed systems.
 
@@ -30,7 +30,7 @@ Within a workflow are steps, which wrap operations whose results should be prese
 
 <img src="img/steps.svg" alt="Completed steps are check-pointed" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-Unlike normal code execution, durable execution persists workflow progress as it runs. If a failure happens, execution resumes from the last completed step instead of starting over. From the developer’s point of view, the application’s execution flow behaves as if the failure had never happened. In other words, durable execution does not make failures happen less; it makes them less consequential.
+Durable execution persists workflow progress as it runs. If a failure happens, execution resumes from the last completed step instead of starting over. From the developer’s point of view, the application’s execution flow behaves as if the failure had never happened. In other words, durable execution does not make failures happen less; it makes them less consequential.
 
 For example, consider code that executes a sequence of five steps where crashes can happen mid-operation at any step.
 
@@ -62,38 +62,40 @@ For example, consider code that executes a sequence of five steps where crashes 
 
 <h3 class="sh" id="why-this-matters-for-agents">Why this Matters for Agents?</h3>
 
-Traditional workflows usually follow a predictable execution path that developers define ahead of time. Agents operate differently.
+Workflows follow a predictable execution path that developers define ahead of time. Agents operate differently.
 
 An agent is an LLM driven system that reasons about a task, takes actions, and adapts based on results until it reaches a goal.
 
-<img src="img/amber-agent-loop.svg" alt="The agent loop: reason, take action, use tools, observe, repeating." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="img/agent-loop.svg" alt="The agent loop: reason, take action, use tools, observe, repeating." style="display:block;width:65%;height:auto;margin:1.5rem auto;">
 
 This autonomy is what makes agents suited to more open-ended tasks, in which the exact execution steps cannot be determined in advance. A request like "fix this bug" does not map easily to a predetermined sequence. Instead, an agent decides what actions to take, observes the results, and determines the next step as it works toward a solution.
 
-[diagram of regular workflows vs agent workflows]
+<img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
-Although agents behave differently from traditional workflows, they still fit naturally within durable execution. Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once a step completes, the runtime stores its result so it can be recovered after a failure instead of being re-executed. This allows long running agent workflows to resume safely without repeating completed work.
+Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once a LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long running agents to resume safely without repeating completed work.
 
 <img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
-This problem is already becoming relevant in practice. Coding agents like Cursor and ChatGPT Codex are increasingly running long lived workflows, and some are already adopting durable execution runtimes or building systems with similar guarantees [[2]](https://cursor.com/blog/cloud-agent-lessons)[[9]](https://temporal.io/blog/improving-java-sdk-codex-openai).
+This problem is already becoming relevant in practice. Coding agents like Cursor and ChatGPT Codex are already adopting durable execution runtimes or building systems with similar guarantees [[2]](https://cursor.com/blog/cloud-agent-lessons)[[9]](https://temporal.io/blog/improving-java-sdk-codex-openai).
 
 However, recovery only solves part of the problem: developers still need to understand how an agent reached a particular outcome.
 
 <h3 class="sh" id="challenges-with-observability">Challenges with Observability</h3>
 
-Modern agent observability tools provide developers with visibility into agent behavior. They capture execution traces, model interactions, tool invocations, and token usage. This helps explain why an agent behaved a certain way.
+Agent observability tools provide developers with visibility into agent behavior. They capture execution traces, model interactions, tool invocations, and token usage. This helps explain why an agent behaved a certain way.
+
+<img src="img/Traces.png" alt="Screenshot of traces in an observability platform" style="display:block;width:60%;height:auto;margin:1.5rem auto;">
 
 However, these systems are usually separate from the durable execution platforms.
 
 This separation becomes especially problematic during failure and recovery, when visibility matters most. When a durable workflow resumes after a crash, previously completed steps are skipped to preserve progress and avoid repeating work. As a result, when a trace resumes, it will be missing every span before the crash. This leaves the resumed traces incomplete. In other words, agent observability and durable execution frameworks are usually two separate record-keeping systems that are not linked.
 
-[diagram of difference between agent observability system and durable execution system]
+<img src="img/observability_durable.svg" style="width:100%">
 
 Thus one main challenge is integrating both systems so agents can get both durability and observability.
 
 An important aspect to integrating observability is preserving the structural hierarchy of agent traces. For long running, multi-agent workflows, determining which agents spawned a subagent or called a tool is critical to root-cause analysis and cost tracking.
 
-[diagram of what hierarchy looks like]
+<img src="img/hierarchy-loss.svg" alt="Visual of span hierarchy compared to linear hierachy of workflow" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 In summary, durable execution is foundational to reliable long running agents, and we begin the next section, by comparing the existing durable execution platforms.
