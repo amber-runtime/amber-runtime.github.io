@@ -33,16 +33,11 @@ We ended up selecting DBOS because it aligned with Amber’s goal of keeping the
 
 Workflow state, queueing, and observability data could all live in one place. This simplified Amber’s architecture and reduced the infrastructure developers needed to manage.
 
-<div class="aslot">
-<p class="atag">Placeholder · diagram</p>
-<p class="awhat">[Diagram of developer's application writing workflows to a postgres instance] [Or diagram of workflow being written to postgres but then dies and then resumes from checkpointed state]</p>
-</div>
+<img src="img/enqueue-workflow.svg" alt="Diagram of agents writing to a queue on postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 <h3 class="sh" id="worker-runtime">Worker Runtime</h3>
 
 Originally, Amber supported both immediate and queued workflow execution. However, requiring developers to choose between execution models added unnecessary complexity. Since Amber primarily targets long running agent workflows that may pause, fail, or resume, we standardized on queued execution.
-
-<img src="img/enqueue-workflow.svg" alt="Diagram of agents writing to a queue on postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 As a result, Amber separates request handling from long running agent execution. The developer’s application service running in AWS ECS accepts requests and enqueues agent workflows in Postgres. A dedicated worker service in AWS ECS then drains the queue and performs the long running work. This removes the need for a separate queueing system like AWS SQS.
 
@@ -75,7 +70,7 @@ CloudFront routes traffic by path:
 
 The dashboard frontend loads in the browser and then uses Cognito sign in before requesting workflow data from the dashboard API.
 
-<img src="img/cloudfront-routes.svg" alt="Diagram showing the routes that user requests can take through Cloudfront" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="img/cloudfront-routes.svg" alt="Diagram showing the routes that user requests can take through Cloudfront" style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open CloudFront routes diagram">
 
 <h4 class="ssh" id="ecs-fargate-and-rds">ECS Fargate and RDS</h4>
 
@@ -109,4 +104,4 @@ List of supporting AWS services:
 
 <h4 class="ssh" id="full-aws-diagram-of-amber">Full AWS Diagram of Amber</h4>
 
-<img src="img/full-architecture.svg" alt="Diagram showing the full detailed Amber AWS architecture with all of its components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="img/full-architecture.svg" alt="Diagram showing the full detailed Amber AWS architecture with all of its components." style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open full AWS architecture diagram">

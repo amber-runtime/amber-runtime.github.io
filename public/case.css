@@ -304,6 +304,9 @@ h1 .grad{
   cursor:pointer;transition:transform .16s ease,background .16s ease}
 .case-carousel__dots button.is-active{background:var(--amber);transform:scale(1.15)}
 .case-carousel__dots button:focus-visible{outline:3px solid rgba(245,158,11,.5);outline-offset:4px}
+[data-lightbox-image]{cursor:zoom-in;transition:transform .18s ease,filter .18s ease}
+[data-lightbox-image]:hover{transform:scale(1.012);filter:brightness(1.06)}
+[data-lightbox-image]:focus-visible{outline:3px solid rgba(245,158,11,.5);outline-offset:4px}
 
 @media(min-width:1400px){
   .case-carousel{max-width:760px}
@@ -494,4 +497,3 @@ footer{margin-top:40px;border-top:1px solid var(--line-soft);padding:64px 0 80px
 .de-anim .de-legend .sw.kept{background:rgba(245,158,11,.15);border-color:rgba(245,158,11,.30)}
 .de-anim .de-legend .sw.done{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.30)}
 .de-anim .de-legend .sw.lost{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.30)}
-

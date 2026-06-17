@@ -86,14 +86,14 @@
 
 /* ===================== image lightbox ===================== */
 (function(){
-  var imgs=[].slice.call(document.querySelectorAll('.case-carousel__frame img'));
+  var imgs=[].slice.call(document.querySelectorAll('.case-carousel__frame img, [data-lightbox-image]'));
   if(!imgs.length) return;
 
   var lightbox=document.createElement('div');
   lightbox.className='image-lightbox';
   lightbox.setAttribute('role','dialog');
   lightbox.setAttribute('aria-modal','true');
-  lightbox.setAttribute('aria-label','Fullscreen screenshot');
+  lightbox.setAttribute('aria-label','Fullscreen image');
   lightbox.innerHTML='<button class="image-lightbox__close" type="button" aria-label="Close fullscreen image">&times;</button><img class="image-lightbox__img" alt="">';
   document.body.appendChild(lightbox);
 
@@ -116,6 +116,12 @@
 
   imgs.forEach(function(img){
     img.addEventListener('click',function(){ open(img); });
+    img.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        open(img);
+      }
+    });
   });
   close.addEventListener('click',hide);
   lightbox.addEventListener('click',function(e){
