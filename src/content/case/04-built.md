@@ -10,7 +10,7 @@ title: "How we built Amber"
 
 To better understand how we built Amber, we start by presenting a high level overview of the components of Amber.
 
-[Diagram of the 5 components]
+<img src="img/aws-highlevel.svg" alt="High level look of Amber components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Amber is composed of five main subsystems:
 <ol class="bl">
@@ -46,10 +46,7 @@ As a result, Amber separates request handling from long running agent execution.
 
 This separation allows the application service and worker runtime to scale independently based on their own traffic patterns.
 
-<div class="aslot">
-<p class="atag">Placeholder · diagram</p>
-<p class="awhat">[Diagram showing how the developer's application only enqueues while we have a separate worker pool that drains from the queue (postgres)]</p>
-</div>
+<img src="img/dequeue-workflow.svg" alt="Diagram of workers dequeueing from postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 At this point, Amber could define durable agent workflows and execute them reliably. The next challenge was deployment. Since Amber is self hosted, developers needed a way to run these components inside their own AWS account.
 
@@ -76,10 +73,7 @@ CloudFront routes traffic by path:
 
 The dashboard frontend loads in the browser and then uses Cognito sign in before requesting workflow data from the dashboard API.
 
-<div class="aslot">
-<p class="atag">Placeholder · diagram</p>
-<p class="awhat">[Diagram of the different routes when it hits cloudfront and then ALB? Maybe show S3 bucket serving the react frontends too]</p>
-</div>
+<img src="img/cloudfront-routes.svg" alt="Diagram showing the routes that user requests can take through Cloudfront" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 <h4 class="ssh" id="ecs-fargate-and-rds">ECS Fargate and RDS</h4>
 
@@ -93,10 +87,7 @@ Amber deploys three main ECS services:
 
 All three ECS services connect through RDS Proxy to RDS Postgres. Postgres stores the durable workflow state, queue state, step history, and agent event data used by Amber.
 
-<div class="aslot">
-<p class="atag">Placeholder · diagram</p>
-<p class="awhat">[Diagram of the three ecs services and RDS Proxy and RDS]</p>
-</div>
+<img src="img/compute-data-layer.svg" alt="Diagram showing the agent, worker, and dashboard backend and how they communicate with the data layer" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 <h4 class="ssh" id="supporting-aws-services">Supporting AWS Services</h4>
 
@@ -111,14 +102,9 @@ List of supporting AWS services:
 <li>CloudWatch collects service logs and queue metrics for ECS autoscaling.</li>
 </ol>
 
-<div class="aslot">
-<p class="atag">Placeholder · diagram</p>
-<p class="awhat">[Diagram of each of the individual services by itself]</p>
-</div>
+
+<img src="img/supporting-services.svg" alt="Diagram showing the services that support the AWS infrastructure: ECR, Parameter Store, Secrets Manager, S3 Bucket, Cognito, and Cloudwatch." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 <h4 class="ssh" id="full-aws-diagram-of-amber">Full AWS Diagram of Amber</h4>
 
-<div class="aslot">
-<p class="atag">Placeholder · diagram</p>
-<p class="awhat">[Full AWS diagram of Amber]</p>
-</div>
+<img src="img/full-architecture.svg" alt="Diagram showing the full detailed Amber AWS architecture with all of its components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
