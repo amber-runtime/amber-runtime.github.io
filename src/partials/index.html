@@ -363,8 +363,8 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
 <!-- ===================== SIGNATURE MOMENT ===================== -->
 <section class="section shell" id="signature">
   <p class="sec-eyebrow"><span class="n">01</span> The code</p>
-  <h2 class="sec-title">Crash recovery is a few decorators.</h2>
-  <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. To survive a crash you add two Amber decorators: <code>@register_agent</code> for the durable workflow, <code>@step</code> for the units inside it. It picks up from the last completed step rather than starting over.</p>
+  <h2 class="sec-title">Crash recovery is a few lines.</h2>
+  <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. <code>@register_agent</code> and <code>@step</code> make it durable, and <code>agent_runner</code> runs it inside the workflow, so a crash mid-run resumes from the last completed step instead of starting over.</p>
 
   <pre class="cmp-code"><span class="kw">from</span> agents <span class="kw">import</span> Agent, function_tool
 <span class="kw">from</span> amber <span class="kw">import</span> register_agent, agent_runner, step
@@ -378,7 +378,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
 <span class="c"># declare the agent with the openai-agents sdk</span>
 research_agent = Agent(
     name=<span class="str">"research-assistant"</span>,
-    instructions=<span class="str">"Search the web and synthesize findings into a clear summary."</span>,
+    instructions=<span class="str">"..."</span>,
     tools=[search_web],
 )
 
