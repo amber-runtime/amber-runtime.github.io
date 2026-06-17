@@ -96,4 +96,6 @@ Thus one main challenge is integrating both systems so agents can get both durab
 
 An important aspect to integrating observability is preserving the structural hierarchy of agent traces. For long running, multi-agent workflows, determining which agents spawned a subagent or called a tool is critical to root-cause analysis and cost tracking.
 
-[diagram of what hierarchy looks like]
+<img src="img/hierarchy-loss.svg" alt="Visual of span hierarchy compared to linear hierachy of workflow" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+
+In summary, durable execution is foundational to reliable long running agents, and we begin the next section, by comparing the existing durable execution platforms.
