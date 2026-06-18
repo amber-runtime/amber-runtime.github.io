@@ -15,11 +15,11 @@ Although AWS Durable Lambdas met many of Amber’s technical needs, we found tha
 
 With AWS Durable Lambdas, we would need more AWS services to accomplish the same thing. To support asynchronous execution, we would likely introduce services such as SQS or EventBridge to decouple request handling from workflow execution. For agent traces, a separate data store is needed to store that information because workflow checkpointing is abstracted behind AWS managed orchestration.
 
-<h4 class="ssh">Trade Offs</h4>
+<h4 class="ssh">Tradeoffs</h4>
 
-The main trade off of using DBOS is that queueing, durability, and storing of agent traces are all consolidated into Postgres. Under heavy workloads, this places greater pressure on the database and requires developers to monitor performance, connection limits, and worker concurrency more carefully.
+The main tradeoff of using DBOS is that queueing, durability, and storing of agent traces are all consolidated into Postgres. Under heavy workloads, this places greater pressure on the database and requires developers to monitor performance, connection limits, and worker concurrency more carefully.
 
-We accepted this trade off because it aligned with Amber’s goal of being a lightweight, self hosted durable execution platform with minimal infrastructure while still providing rich agent observability.
+We accepted this tradeoff because it aligned with Amber’s goal of being a lightweight, self hosted durable execution platform with minimal infrastructure while still providing rich agent observability.
 
 <h3 class="sh" id="agent-tracing-and-observability">Agent Tracing and Observability</h3>
 
@@ -33,9 +33,9 @@ We dropped the platform but kept the instrumentation library to customize oursel
 
 The library stored traces in a nested tree that captured which agent made each tool call and where subagents were handed off from. To pull them out, we wrote custom query logic that was tedious to maintain. To reduce code complexity, we switched our trace collection source directly to OpenAI Agents SDK's TracingProcessor API. As a result, we did not need to write custom query logic to get the agent relationship data anymore.
 
-<h4 class="ssh">Trade Offs</h4>
+<h4 class="ssh">Tradeoffs</h4>
 
-The main trade off is Amber’s tracing is more tightly coupled to the OpenAI Agents SDK, making support for other frameworks more limited. We accepted this trade off because it simplified our codebase, removed an unnecessary dependency, and provided cleaner agent-specific observability within Amber’s dashboard.
+The main tradeoff is Amber’s tracing is more tightly coupled to the OpenAI Agents SDK, making support for other frameworks more limited. We accepted this trade off because it simplified our codebase, removed an unnecessary dependency, and provided cleaner agent-specific observability within Amber’s dashboard.
 
 <h3 class="sh" id="embedded-sdk-architecture-vs-separate-runtime-server">Embedded SDK Architecture vs Separate Runtime Server</h3>
 <img src="img/embedded_sdk.svg" alt="The embedded SDK avoids the extra network hop of a separate runtime server." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
@@ -48,9 +48,9 @@ As a result, we decided to remove the separate runtime server because it did not
 
 We then simplified the SDK and made it easier for the developer to embed into their application. Instead of architecting their application around Amber, developers only need to import the SDK and decorate the functions or agents they want durable execution applied to.
 
-<h4 class="ssh">Trade Offs</h4>
+<h4 class="ssh">Tradeoffs</h4>
 
-One trade off of the embedded SDK approach is that the developer's application becomes tightly coupled to the durable execution runtime. If the developer’s application goes down, workflow execution pauses until it becomes available again.
+One tradeoff of the embedded SDK approach is that the developer's application becomes tightly coupled to the durable execution runtime. If the developer’s application goes down, workflow execution pauses until it becomes available again.
 
-We accepted this trade off because developers no longer need to provision and manage a separate runtime server.
+We accepted this tradeoff because developers no longer need to provision and manage a separate runtime server.
 

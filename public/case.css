@@ -86,11 +86,12 @@ body::after{
 
 /* ---------- top minibar ---------- */
 .minibar{position:sticky;top:0;z-index:50;display:flex;align-items:center;
-  height:56px;background:rgba(9,9,11,.7);backdrop-filter:blur(10px);
+  height:64px;padding:0 max(40px, calc((100% - 1180px)/2 + 40px));
+  background:rgba(9,9,11,.72);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line-soft)}
-.minibar-page{width:100%;max-width:min(1440px, 92vw);margin:0 auto;padding:0 32px}
-.minibar-inner{max-width:928px;margin:0 auto;display:flex;align-items:center;gap:18px}
-.brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--display);
+.minibar-page{width:100%}
+.minibar-inner{width:100%;display:flex;align-items:center;gap:16px}
+.brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);
   font-weight:600;font-size:20px;letter-spacing:-.02em;color:var(--amber)}
 .bword{color:#f59e0b}
 .brand .pip{width:11px;height:11px;border-radius:50%;background:var(--amber);
@@ -196,11 +197,12 @@ h1 .grad{
 }
 @media(max-width:980px){
   .page{max-width:none}
-  .minibar-page{max-width:none}
-  .minibar-inner{max-width:none}
   .layout{grid-template-columns:1fr}
   .rail{display:none}
   .opener{min-height:auto;padding-top:64px}
+}
+@media(max-width:880px){
+  .minibar{padding:0 22px}
 }
 @media(max-width:620px){
   body{font-size:16.5px}

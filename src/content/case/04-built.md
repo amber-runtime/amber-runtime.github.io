@@ -8,7 +8,7 @@ title: "How we built Amber"
 ---
 <h3 class="sh" id="high-level-architecture">High-Level Architecture</h3>
 
-To better understand how we built Amber, we start by presenting a high level overview of the components of Amber.
+To better understand how we built Amber, let's look at a high level overview of the components of Amber.
 
 <img src="img/aws-highlevel.svg" alt="High level look of Amber components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 

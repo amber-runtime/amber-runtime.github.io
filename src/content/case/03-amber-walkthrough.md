@@ -12,7 +12,7 @@ Amber fills the gap left by existing durable execution and observability platfor
 
 <h3 class="sh" id="amber-overview">Amber Overview</h3>
 
-Amber ships with a Python SDK and a command-line tool for deploying and managing their agents as durable workflows.
+Amber ships with a Python SDK and a command-line tool for deploying and managing agents as durable workflows.
 
 Developers can use the CLI to run their durable agents locally during development or deploy it to their own infrastructure when moving to production. From there, workflows can be inspected, debugged, and replayed through a dashboard or directly with Amber's CLI tool.
 
@@ -22,8 +22,7 @@ Amber provides a simple Python SDK that serves as the entry point to durable exe
 
 <img src="img/amber-sdk-code.png" alt="Python SDK example showing an OpenAI Agents SDK research assistant registered as a durable Amber workflow." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
-For additional setup instructions and and SDK details see the amber-sdk README:
-[Link: amber-sdk-README](https://github.com/amber-runtime/amber/blob/main/sdk/README.md)
+For additional setup instructions and and SDK details see [the amber-sdk-README](https://github.com/amber-runtime/amber/blob/main/sdk/README.md).
 
 <h3 class="sh" id="dashboard">Dashboard</h3>
 

@@ -8,7 +8,7 @@ title: "Background"
 ---
 <h3 class="sh" id="failure-in-production">Failure in Production</h3>
 
-When working with distributed systems there are various trade offs, one of which is handling state during a crash. When systems aren’t distributed, a failure can be kept in memory. But when a system is distributed you need something more than memory to help persist that state.
+When working with distributed systems there are various tradeoffs, one of which is handling state during a crash. When systems aren’t distributed, the state at the time of failure can be kept in memory. But when a system is distributed you need something more than memory to help persist that state.
 
 This is a classic problem in distributed systems.
 
@@ -72,7 +72,7 @@ This autonomy is what makes agents suited to more open-ended tasks, in which the
 
 <img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
-Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once a LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long running agents to resume safely without repeating completed work.
+Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once an LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long running agents to resume safely without repeating completed work.
 
 <img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
