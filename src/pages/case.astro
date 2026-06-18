@@ -21,8 +21,7 @@ const sections = await Promise.all(entries.map(async e => ({ data:e.data, Conten
   {sections.map(({ data, Content }) => (
     <section class="sec" id={data.id} data-screen-label={data.screenLabel}>
       <div class="secbody">
-        <p class="eyebrow"><span class="sn">{data.num}</span> {data.label} <span class="ln"></span></p>
-        <h2 class="dh">{data.title}</h2>
+        <p class="eyebrow">{data.label} <span class="ln"></span></p>
         <Content />
       </div>
     </section>

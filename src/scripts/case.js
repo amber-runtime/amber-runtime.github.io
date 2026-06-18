@@ -27,7 +27,7 @@
   function setActive(i){
     if(i===cur) return; cur=i;
     for(var k=0;k<items.length;k++) items[k].classList.toggle('on', k===i);
-    if(now) now.innerHTML='\u00a7'+secs[i].n+' \u00b7 <b>'+secs[i].name+'</b>';
+    if(now) now.innerHTML='<b>'+secs[i].name+'</b>';
   }
   items.forEach(function(item,i){
     var link=item.querySelector(':scope > a.ix');

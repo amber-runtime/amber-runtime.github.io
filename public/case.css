@@ -96,32 +96,30 @@ body::after{
 .bword{color:#f59e0b}
 .brand .pip{width:11px;height:11px;border-radius:50%;background:var(--amber);
   box-shadow:0 0 0 4px rgba(245,158,11,.16)}
-.brand .deer{height:26px;width:auto;display:block;flex:none}
+.brand .deer{height:36px;width:auto;display:block;flex:none}
 .minibar a.brand{text-decoration:none}
-.minibar .mlink{font-family:var(--mono);font-size:15px;letter-spacing:.04em;color:var(--mute);
+.minibar .mlink{font-family:var(--mono);font-size:16px;letter-spacing:.04em;color:var(--mute);
   text-decoration:none;transition:color .18s;white-space:nowrap}
 .minibar .mlink:hover{color:var(--amber-lt)}
-.minibar .kind{font-family:var(--mono);font-size:15px;letter-spacing:.04em;
+.minibar .kind{font-family:var(--mono);font-size:16px;letter-spacing:.04em;
   text-transform:none;color:var(--mute)}
-.minibar .now{margin-left:auto;font-family:var(--mono);font-size:13px;
+.minibar .now{margin-left:auto;font-family:var(--mono);font-size:14px;
   letter-spacing:.12em;color:var(--faint)}
 .minibar .now b{color:var(--amber);font-weight:400}
 
 /* ---------- broadsheet layout ---------- */
 .page{max-width:min(1440px, 92vw);margin:0 auto;padding:0 32px}
-.layout{display:grid;grid-template-columns:196px minmax(0, 680px);gap:52px;align-items:start;justify-content:center}
+.layout{display:grid;grid-template-columns:196px minmax(0, 680px);gap:52px;align-items:start;justify-content:left}
 
 /* left rail */
 .rail{position:sticky;top:84px;padding-top:clamp(32px, 8vh, 72px);font-family:var(--mono)}
 .rail .rlabel{font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
   color:var(--mute);margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}
 .idx{list-style:none;margin:0;padding:0}
-.idx li{position:relative;display:flex;gap:10px;align-items:baseline;
-  padding:6px 0 6px 14px;font-size:14px;font-weight:500;line-height:1.45;color:var(--bone-dim);transition:color .2s}
-.idx li::before{content:"";position:absolute;left:0;top:13px;width:6px;height:1px;background:var(--mute)}
+.idx li{display:flex;gap:10px;align-items:baseline;
+  padding:6px 0;font-size:14px;font-weight:500;line-height:1.45;color:var(--bone-dim);transition:color .2s}
 .idx li .num{color:var(--mute);font-size:12px;font-weight:500;letter-spacing:.05em}
 .idx li.on{color:var(--bone);font-weight:600}
-.idx li.on::before{width:9px;height:1px;background:var(--amber)}
 .idx li.on .num{color:var(--amber)}
 .idx li.has-sub{display:block}
 .subidx{list-style:none;margin:7px 0 2px;padding:0 0 0 22px}
@@ -145,14 +143,14 @@ body::after{
 .prose{max-width:680px}
 
 /* ---------- hero opener ---------- */
-.opener{min-height:72vh;display:flex;flex-direction:column;justify-content:center;
-  padding:112px 0 56px}
-.eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:13px;font-weight:500;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin:0 0 34px}
+.opener{display:flex;flex-direction:column;justify-content:flex-start;
+  padding:32px 0 30px}
+.eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--display);font-size:clamp(30px,3.5vw,46px);font-weight:600;
+  line-height:1.08;letter-spacing:-.025em;color:var(--amber);margin:0 0 26px}
 .eyebrow .sn{color:var(--bone);font-weight:700}
 .eyebrow .ln{flex:1;height:1px;background:linear-gradient(90deg,rgba(245,158,11,.30),rgba(236,72,153,.22) 45%,transparent)}
 h1{font-family:var(--display);font-weight:600;color:var(--bone);
-  font-size:clamp(40px,6vw,74px);line-height:1.02;letter-spacing:-.03em;margin:0 0 30px}
+  font-size:clamp(22px, 2.8vw, 36px);line-height:1.02;letter-spacing:-.03em;margin:0 0 30px}
 /* opening emblem: solid amber deer crest above the headline, aligned to the text column */
 .deer-feature{height:clamp(104px,9vw,142px);width:auto;display:block;margin:0 0 30px;
   filter:drop-shadow(0 6px 22px rgba(245,158,11,.22))}
@@ -160,7 +158,7 @@ h1 .grad{
   background:linear-gradient(96deg,#f59e0b 0%,#fcd34d 100%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
 }
-.lede{font-size:21px;line-height:1.6;color:var(--bone-dim);max-width:660px;margin:0 0 40px;
+.lede{font-size:21px;line-height:1.6;color:var(--bone-dim);max-width:660px;margin:0 0 0;
   font-weight:450}
 .lede em{font-style:normal;color:var(--amber-lt)}
 
@@ -216,7 +214,7 @@ h1 .grad{
 .sec{padding:32px 0 56px;scroll-margin-top:80px;position:relative}
 .sec-intro{padding-top:0}
 .secbody{max-width:680px}
-.sec-intro .secbody{margin-top:6px}
+.sec-intro .secbody{margin-top:0px}
 /* recurring SUNSET aurora: a soft glow fades in at each section opener, rotating through the range and alternating corners */
 .sec::before{
   content:"";position:absolute;z-index:-1;pointer-events:none;
@@ -242,7 +240,7 @@ h1 .grad{
   letter-spacing:0;margin:34px 0 12px;display:flex;align-items:baseline;gap:10px}
 .ssh[id]{scroll-margin-top:88px}
 .ssh::before{content:"";width:6px;height:1px;background:var(--amber);transform:translateY(-5px);flex:none}
-.bp{font-size:18px;line-height:1.72;color:var(--body);margin:0 0 22px;max-width:680px;text-wrap:pretty}
+.bp{font-size:18px;line-height:1.72;color:#fff;margin:0 0 22px;max-width:680px;text-wrap:pretty}
 .bp strong{color:var(--bone);font-weight:600}
 .bp a,.bl a{color:var(--amber-lt);text-decoration:none;border-bottom:1px solid var(--line);word-break:break-word}
 .bp a:hover,.bl a:hover{border-color:var(--amber)}
@@ -251,7 +249,7 @@ h1 .grad{
 .secbody code{font-family:var(--mono);font-size:.88em;color:var(--amber-lt);
   background:var(--amber-wash);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
 .secbody pre code{font-size:inherit;color:inherit;background:transparent;border:0;border-radius:0;padding:0}
-.bl{font-size:18px;line-height:1.7;color:var(--body);max-width:680px;margin:0 0 22px;padding-left:26px}
+.bl{font-size:18px;line-height:1.7;color:#fff;max-width:680px;margin:0 0 22px;padding-left:26px}
 .bl li{margin:0 0 10px;padding-left:4px}
 .bl li::marker{color:var(--amber);font-family:var(--mono);font-size:13px}
 .bl ol,.bl ul{margin:11px 0 4px;padding-left:24px}
@@ -463,7 +461,7 @@ footer{margin-top:40px;border-top:1px solid var(--line-soft);padding:64px 0 80px
 
 
 /* markdown reconciliation */
-.secbody > p:not(.eyebrow){font-size:18px;line-height:1.72;color:var(--body);margin:0 0 22px;max-width:680px;text-wrap:pretty}
+.secbody > p:not(.eyebrow){font-size:18px;line-height:1.72;color:#fff;margin:0 0 22px;max-width:680px;text-wrap:pretty}
 
 /* ===== Normal vs durable execution animation (durable subsection) ===== */
 .de-anim .panel{border:1px solid rgba(245,244,242,.14);border-radius:16px;background:#18181b;padding:26px;margin:30px 0}

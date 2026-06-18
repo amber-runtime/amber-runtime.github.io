@@ -12,6 +12,7 @@ Choosing a durable execution platform requires weighing three key factors:
 	<li>Whether you self-host the runtime or consume it as a managed cloud service.</li>
 	<li>The infrastructure that each runtime requires to run, ranging from a single process backed by one database to a distributed cluster of services.</li>
 </ol>
+
 The first two matter most to teams with privacy or compliance needs that require execution to stay inside their own systems; the third drives the ongoing cost of running it there.
 
 <h3 class="sh" id="diy">DIY</h3>
