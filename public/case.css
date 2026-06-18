@@ -57,7 +57,7 @@ body::after{
     radial-gradient(1200px 1000px at 28% -22%, rgba(217,70,239,.27), rgba(217,70,239,.08) 42%, transparent 74%),
     radial-gradient(1250px 1020px at -8% -8%, rgba(168,85,247,.30), rgba(168,85,247,.10) 40%, transparent 74%);
 }
-.wrap{position:relative;z-index:1}
+.wrap{position:relative;z-index:1;padding-top:64px}
 /* hero glow: wide, edgeless sunset pools washing behind and around the headline (scrolls away with the hero, no amber) */
 .hero-glow{
   position:absolute;top:0;left:0;right:0;height:112vh;z-index:-1;pointer-events:none;

@@ -19,7 +19,7 @@ const { page = 'home' } = Astro.props;
 </header>
 
 <style is:global>
-  .minibar{position:sticky;top:0;z-index:50;display:flex;align-items:center;
+  .minibar{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;
     height:64px;padding:0 max(40px, calc((100% - 1180px)/2 + 40px));
     background:rgba(9,9,11,.72);backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
   .minibar-inner{width:100%;display:flex;align-items:center;gap:16px}
