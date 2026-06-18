@@ -139,6 +139,11 @@ img.deer{display:block;width:auto;flex:none}
   letter-spacing:.03em;color:var(--mute);margin:2px 2px 0}
 .cmp-foot b{color:var(--amber-lt);font-weight:600}
 .cmp-foot .dot{width:5px;height:5px;border-radius:50%;background:var(--amber)}
+/* signature: side-by-side (copy left, code right) only above 1180px; stacked below */
+@media(min-width:1181px){
+  #signature{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,5vw,72px);align-items:start}
+  #signature .cmp-code{margin:0}
+}
 
 /* ---------- feature beats ---------- */
 .beat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,5vw,80px);align-items:center;
@@ -308,9 +313,11 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
 
 <!-- ===================== SIGNATURE MOMENT ===================== -->
 <section class="section shell" id="signature">
-  <p class="sec-eyebrow"><span class="n">01</span> The code</p>
-  <h2 class="sec-title">Crash recovery is a few lines.</h2>
-  <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. <code>@register_agent</code> and <code>@step</code> make it durable, and <code>agent_runner</code> runs it inside the workflow, so a crash mid-run resumes from the last completed step instead of starting over.</p>
+  <div class="sig-copy">
+    <p class="sec-eyebrow"><span class="n">01</span> The code</p>
+    <h2 class="sec-title">Crash recovery is a few lines.</h2>
+    <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. <code>@register_agent</code> and <code>@step</code> make it durable, and <code>agent_runner</code> runs it inside the workflow, so a crash mid-run resumes from the last completed step instead of starting over.</p>
+  </div>
 
   <pre class="cmp-code"><span class="kw">from</span> agents <span class="kw">import</span> Agent, function_tool
 <span class="kw">from</span> amber <span class="kw">import</span> register_agent, agent_runner, step
