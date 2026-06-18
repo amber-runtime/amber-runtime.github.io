@@ -37,9 +37,9 @@ Additionally, running Temporal requires operating a cluster of services, which c
 
 Inngest, like Temporal, offers a cloud service that manages durable execution, but it simplifies the developer experience significantly. It also requires less infrastructure to run.
 
-While the source code for Inngest is available, and self hosting Inngest is possible, the license for the source code is not exactly open source. This lack of clarity may deter developers and organizations who are looking to self host or have concerns about privacy and data compliance.
+While the source code for Inngest is available, and self-hosting Inngest is possible, the license for the source code is not exactly open source. This lack of clarity may deter developers and organizations who are looking to self-host or have concerns about privacy and data compliance.
 
-While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations that want to self host for cost or compliance reasons do not have a simple solution that combines good developer experience and easy to manage infrastructure.
+While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations that want to self-host for cost or compliance reasons do not have a simple solution that combines good developer experience and easy to manage infrastructure.
 
 <img src="img/existing-solutions.svg" alt="Existing solutions table">
 
@@ -47,4 +47,4 @@ Amber is fully open source and self-hosted on Amazon Web Services (AWS).
 
 It builds on DBOS, an open-source durable execution engine that runs embedded within the application rather than as a separate service, and relies on Postgres alone for infrastructure.
 
-While Amber does not yet support multiple agent frameworks, it offers native integration with the OpenAI Agents SDK, written in Python. We chose OpenAI Agents SDK as it's among the most widely adopted frameworks for building agents.
+While Amber does not yet support multiple agent frameworks, it offers native integration with the OpenAI Agents SDK, written in Python. We chose the OpenAI Agents SDK as it's among the most widely adopted frameworks for building agents.

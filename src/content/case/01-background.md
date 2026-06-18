@@ -8,13 +8,13 @@ title: "Background"
 ---
 <h3 class="sh" id="failure-in-production">Failure in Production</h3>
 
-When working with distributed systems there are various tradeoffs, one of which is handling state during a crash. When systems aren’t distributed, the state at the time of failure can be kept in memory. But when a system is distributed you need something more than memory to help persist that state.
+When working with distributed systems, there are various tradeoffs, one of which is handling state during a crash. When systems aren’t distributed, the state at the time of failure can be kept in memory. But when a system is distributed, you need something more than memory to help persist that state.
 
 This is a classic problem in distributed systems.
 
 <img src="img/double-charge.svg" alt="A naive restart re-runs the charge step and charges the customer twice." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-A process may complete part of its work successfully before a later step crashes. When this happens, the process can be stuck in limbo. There’s no preservation of what already happened or where it's safe to resume. Restarting from the beginning can cause real consequences like charging a payment twice.
+A process may complete part of its work successfully before a later step crashes. When this happens, the process can be stuck in limbo. There’s no preservation of what already happened or where it's safe to resume. Restarting from the beginning can cause real consequences, like charging a payment twice.
 
 This is where durable execution comes in.
 
@@ -22,7 +22,7 @@ This is where durable execution comes in.
 
 Durable execution is built around workflows and steps that allow code to be replayed deterministically after failures.
 
-A workflow wraps the orchestration logic that defines a process. It represents the execution path and ensures the code can resume from where it left off rather than starting over.
+A workflow wraps the orchestration logic that defines a process. It represents the execution path and ensures the code can resume from where it left off, rather than starting over.
 
 <img src="img/workflow.svg" alt="A workflow is composed of steps" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
@@ -72,7 +72,7 @@ This autonomy is what makes agents suited to more open-ended tasks, in which the
 
 <img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
-Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once an LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long running agents to resume safely without repeating completed work.
+Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once an LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long-running agents to resume safely without repeating completed work.
 
 <img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
@@ -90,10 +90,10 @@ This separation becomes especially problematic during failure and recovery, when
 
 <img src="img/observability_durable.svg" style="width:100%">
 
-Thus one main challenge is integrating both systems so agents can get both durability and observability.
+Thus, one main challenge is integrating both systems so agents can get both durability and observability.
 
-An important aspect to integrating observability is preserving the structural hierarchy of agent traces. For long running, multi-agent workflows, determining which agents spawned a subagent or called a tool is critical to root-cause analysis and cost tracking.
+An important aspect of integrating observability is preserving the structural hierarchy of agent traces. For long-running, multi-agent workflows, determining which agents spawned a subagent or called a tool is critical to root-cause analysis and cost tracking.
 
 <img src="img/hierarchy-loss.svg" alt="Visual of span hierarchy compared to linear hierachy of workflow" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-In summary, durable execution is foundational to reliable long running agents, and we begin the next section, by comparing the existing durable execution platforms.
+In summary, durable execution is foundational to reliable long-running agents, and we begin the next section by comparing the existing durable execution platforms.

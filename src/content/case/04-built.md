@@ -39,13 +39,13 @@ Workflow state, queueing, and observability data could all live in one place. Th
 
 Originally, Amber supported both immediate and queued workflow execution. However, requiring developers to choose between execution models added unnecessary complexity. Since Amber primarily targets long running agent workflows that may pause, fail, or resume, we standardized on queued execution.
 
-As a result, Amber separates request handling from long running agent execution. The developer’s application service running in AWS ECS accepts requests and enqueues agent workflows in Postgres. A dedicated worker service in AWS ECS then drains the queue and performs the long running work. This removes the need for a separate queueing system like AWS SQS.
+As a result, Amber separates request handling from long-running agent execution. The developer’s application service running in AWS ECS accepts requests and enqueues agent workflows in Postgres. A dedicated worker service in AWS ECS then drains the queue and performs the long running work. This removes the need for a separate queueing system like AWS SQS.
 
 This separation allows the application service and worker runtime to scale independently based on their own traffic patterns.
 
 <img src="img/dequeue-workflow.svg" alt="Diagram of workers dequeueing from postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-At this point, Amber could define durable agent workflows and execute them reliably. The next challenge was deployment. Since Amber is self hosted, developers needed a way to run these components inside their own AWS account.
+At this point, Amber could define durable agent workflows and execute them reliably. The next challenge was deployment. Since Amber is self-hosted, developers needed a way to run these components inside their own AWS account.
 
 To make the AWS architecture easier to understand, we break it down into its major components before showing how everything fits together.
 
@@ -78,7 +78,7 @@ Amber deploys three main ECS services:
 
 <ol class="bl">
 <li>Developer's application FastAPI service which handles API requests and enqueues agent workflows.</li>
-<li>Developer's worker service which drains queued workflows and executes long running agent workflows.</li>
+<li>Developer's worker service which drains queued workflows and executes long-running agent workflows.</li>
 <li>Admin Dashboard API service which reads workflow state and displays the information to the dashboard UI.</li>
 </ol>
 
@@ -94,7 +94,7 @@ List of supporting AWS services:
 <li>ECR stores the developer's application, worker, and dashboard API container images.</li>
 <li>SSM Parameter Store stores OpenAI API key.</li>
 <li>Secrets Manager stores the database connection URL and RDS Proxy credentials.</li>
-<li>S3 serves the static frontend assets for the Amber admin dashboard and if configured the developer's React frontend.</li>
+<li>S3 serves the static frontend assets for the Amber admin dashboard and, if configured, the developer's React frontend.</li>
 <li>Cognito manages authentication for the admin dashboard.</li>
 <li>CloudWatch collects service logs and queue metrics for ECS autoscaling.</li>
 </ol>

@@ -6,7 +6,7 @@ label: "Amber Walkthrough"
 screenLabel: "Amber Walkthrough"
 title: "Amber Walkthrough"
 ---
-Amber fills the gap left by existing durable execution and observability platforms. Current durable execution platforms focus on workflow reliability, while observability tools focus on traces and logs. Amber combines both in a self hosted solution designed specifically for AI agents.
+Amber fills the gap left by existing durable execution and observability platforms. Current durable execution platforms focus on workflow reliability, while observability tools focus on traces and logs. Amber combines both in a self-hosted solution designed specifically for AI agents.
 
 <img src="img/amber-capability-table.svg" alt="Only Amber covers agent-aware tracing, workflow-state visibility, token cost, and durable execution." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
@@ -14,7 +14,7 @@ Amber fills the gap left by existing durable execution and observability platfor
 
 Amber ships with a Python SDK and a command-line tool for deploying and managing agents as durable workflows.
 
-Developers can use the CLI to run their durable agents locally during development or deploy it to their own infrastructure when moving to production. From there, workflows can be inspected, debugged, and replayed through a dashboard or directly with Amber's CLI tool.
+Developers can use the CLI to run their durable agents locally during development or deploy them to their own infrastructure when moving to production. From there, workflows can be inspected, debugged, and replayed through a dashboard or directly with Amber's CLI tool.
 
 <h3 class="sh" id="sdk">SDK</h3>
 
@@ -26,7 +26,7 @@ For additional setup instructions and and SDK details see [the amber-sdk-README]
 
 <h3 class="sh" id="dashboard">Dashboard</h3>
 
-Amber provides a dashboard for managing and debugging durable workflows. The dashboard allows for agent-specific tracing by using OpenAI Agent SDK’s own TracingProcessor API.
+Amber provides a dashboard for managing and debugging durable workflows. The dashboard allows for agent-specific tracing by using the OpenAI Agent SDK’s own TracingProcessor API.
 
 <div class="case-carousel" data-carousel aria-label="Amber dashboard walkthrough">
   <div class="case-carousel__viewport">
