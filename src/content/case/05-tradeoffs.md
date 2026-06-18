@@ -17,7 +17,7 @@ With AWS Durable Lambdas, we would need more AWS services to accomplish the same
 
 <h4 class="ssh">Tradeoffs</h4>
 
-The main tradeoff of using DBOS is that queueing, durability, and storing of agent traces are all consolidated into Postgres. Under heavy workloads, this places greater pressure on the database and requires developers to monitor performance, connection limits, and worker concurrency more carefully.
+The main tradeoff of using DBOS is that queueing, durability, and agent trace storage are all consolidated into Postgres. Although DBOS can sustain over 40,000 workflow or step executions per second on a single database, the database remains a central dependency. Under heavy workloads, developers must monitor performance, connection limits, and worker concurrency more carefully. Scaling beyond a single database is possible through workflow sharding, but at the cost of additional operational complexity.
 
 We accepted this tradeoff because it aligned with Amber’s goal of being a lightweight, self-hosted durable execution platform with minimal infrastructure while still providing rich agent observability.
 

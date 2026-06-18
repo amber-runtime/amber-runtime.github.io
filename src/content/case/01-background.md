@@ -8,13 +8,11 @@ title: "Background"
 ---
 <h3 class="sh" id="failure-in-production">Failure in Production</h3>
 
-When working with distributed systems, there are various tradeoffs, one of which is handling state during a crash. When systems aren’t distributed, the state at the time of failure can be kept in memory. But when a system is distributed, you need something more than memory to help persist that state.
-
-This is a classic problem in distributed systems.
+In distributed systems, a process may complete part of its work successfully before a later step crashes. When this happens, the process can be stuck in limbo. There’s no preservation of what already happened or where it's safe to resume. Restarting from the beginning can cause real consequences, like charging a payment twice.
 
 <img src="img/double-charge.svg" alt="A naive restart re-runs the charge step and charges the customer twice." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-A process may complete part of its work successfully before a later step crashes. When this happens, the process can be stuck in limbo. There’s no preservation of what already happened or where it's safe to resume. Restarting from the beginning can cause real consequences, like charging a payment twice.
+When systems aren’t distributed, the state at the time of failure can be kept in memory. But when a system is distributed, you need something more than memory to help persist that state.
 
 This is where durable execution comes in.
 
