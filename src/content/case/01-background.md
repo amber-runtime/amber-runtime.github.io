@@ -78,8 +78,6 @@ Agent behavior may be nondeterministic, but its progress can still be preserved 
 
 This problem is already becoming relevant in practice. Coding agents like Cursor and ChatGPT Codex are already adopting durable execution runtimes or building systems with similar guarantees [[2]](https://cursor.com/blog/cloud-agent-lessons)[[9]](https://temporal.io/blog/improving-java-sdk-codex-openai).
 
-However, recovery only solves part of the problem: developers still need to understand how an agent reached a particular outcome.
-
 <h3 class="sh" id="challenges-with-observability">Challenges with Observability</h3>
 
 Agent observability tools provide developers with visibility into agent behavior. They capture execution traces, model interactions, tool invocations, and token usage. This helps explain why an agent behaved a certain way.
