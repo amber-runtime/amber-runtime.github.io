@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Navbar from '../components/Navbar.astro';
 import body from '../partials/index.html?raw';
 const title = 'Amber — agents that survive the crash';
 const description = 'Open source, self-hosted durable execution and observability for AI agents, built on DBOS and Postgres.';
@@ -10,5 +11,6 @@ const description = 'Open source, self-hosted durable execution and observabilit
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   </Fragment>
+  <Navbar page="home" />
   <Fragment set:html={body} />
 </Base>

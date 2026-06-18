@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Navbar from '../components/Navbar.astro';
 import { getCollection, render } from 'astro:content';
 import prefix from '../partials/case-prefix.html?raw';
 import suffix from '../partials/case-suffix.html?raw';
@@ -17,6 +18,7 @@ const sections = await Promise.all(entries.map(async e => ({ data:e.data, Conten
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
   
   </Fragment>
+  <Navbar page="case" />
   <Fragment set:html={prefix} />
   {sections.map(({ data, Content }) => (
     <section class="sec" id={data.id} data-screen-label={data.screenLabel}>

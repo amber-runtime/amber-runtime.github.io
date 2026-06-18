@@ -101,6 +101,9 @@ body::after{
 .minibar .mlink{font-family:var(--mono);font-size:16px;letter-spacing:.04em;color:var(--mute);
   text-decoration:none;transition:color .18s;white-space:nowrap}
 .minibar .mlink:hover{color:var(--amber-lt)}
+.minibar .mlink.ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-soft);
+  border-radius:8px;padding:8px 13px;color:var(--bone-dim)}
+.minibar .mlink.ghost:hover{border-color:var(--line);color:var(--amber-lt)}
 .minibar .kind{font-family:var(--mono);font-size:16px;letter-spacing:.04em;
   text-transform:none;color:var(--mute)}
 .minibar .now{margin-left:auto;font-family:var(--mono);font-size:14px;
