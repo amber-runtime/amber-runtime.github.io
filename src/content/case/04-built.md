@@ -55,7 +55,7 @@ To make the AWS architecture easier to understand, we break it down into its maj
 
 To simplify deployment, we built the Amber CLI to provision the required infrastructure and deploy the application runtime in a couple of commands.
 
-The major deployment pieces are CloudFront, ECS Fargate, RDS, and supporting AWS services.
+The major deployment pieces are CloudFront (AWS's Content delivery and routing), ECS Fargate (AWS's serverless container runtime), RDS (AWS's managed relational database service), and supporting AWS services.
 
 <h4 class="ssh" id="cloudfront">CloudFront</h4>
 
@@ -74,7 +74,7 @@ The dashboard frontend loads in the browser and then uses Cognito sign in before
 
 <h4 class="ssh" id="ecs-fargate-and-rds">ECS Fargate and RDS</h4>
 
-Amber deploys three main ECS services:
+Amber deploys three main ECS Fargate services, which are containerized applications that run without requiring developers to manage severs:
 
 <ol class="bl">
 <li>Developer's application FastAPI service which handles API requests and enqueues agent workflows.</li>
@@ -82,7 +82,7 @@ Amber deploys three main ECS services:
 <li>Admin Dashboard API service which reads workflow state and displays the information to the dashboard UI.</li>
 </ol>
 
-All three ECS services connect through RDS Proxy to RDS Postgres. Postgres stores the durable workflow state, queue state, step history, and agent event data used by Amber.
+All three services connect through RDS Proxy to RDS Postgres, a managed PostgreSQL database. Postgres stores the durable workflow state, queue state, step history, and agent event data used by Amber.
 
 <img src="img/compute-data-layer.svg" alt="Diagram showing the agent, worker, and dashboard backend and how they communicate with the data layer" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
