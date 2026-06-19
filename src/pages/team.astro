@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Navbar from '../components/Navbar.astro';
+import body from '../partials/team.html?raw';
+const title = 'Team — Amber';
+const description = 'Meet the team behind Amber.';
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}assets/brand-2.svg`}>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  </Fragment>
+  <Navbar page="team" />
+  <Fragment set:html={body} />
+</Base>
