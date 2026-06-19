@@ -8,20 +8,18 @@ title: "How we built Amber"
 ---
 <h3 class="sh" id="high-level-architecture">High-Level Architecture</h3>
 
-To better understand how we built Amber, let's look at a high level overview of the components of Amber.
+To better understand how we built and deploy Amber, let's look at a high level overview of the components.
 
 <img src="img/aws-highlevel.svg" alt="High level look of Amber components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
-Amber is composed of five main subsystems:
+Amber's architecture is composed of the following layers:
 <ol class="bl">
-<li>Developer SDK</li>
-<li>Durable Execution Engine</li>
-<li>Worker Runtime</li>
-<li>Observability Admin Dashboard</li>
-<li>Self-hosted AWS Deployment</li>
+<li>Web layer, which routes traffic and hosts the Dashboard frontend and any optional Agent frontends.</li>
+<li>Application layer, which hosts the Agents built with our SDK. In addition to hosting the Agents, this layer is also home to the Dashboard backend and worker pool.</li>
+<li>Data layer, where Agent execution steps are queued and the results stored.</li>
 </ol>
 
-Together, these let developers define AI agents in their application code while Amber handles queueing, recovery, workflow state, observability, and cloud infrastructure.
+The first component we will discuss is the durable execution engine itself, which is part of the application layer.
 
 <h3 class="sh" id="durable-execution-engine">Durable Execution Engine</h3>
 
@@ -63,7 +61,7 @@ CloudFront routes traffic by path:
 
 <ol class="bl">
 <li>Application API requests go to the developer's FastAPI service.</li>
-<li>Dashboard UI requests go to the Amber admin React frontend.</li>
+<li>Dashboard UI requests go to the Amber Dashboard frontend written in React.</li>
 <li>Dashboard API requests go to a separate FastAPI service and require Cognito authentication.</li>
 <li>If the developer's application includes a React frontend, CloudFront serves that frontend at <code>/</code> and routes the FastAPI service under <code>/api/*</code>.</li>
 </ol>
