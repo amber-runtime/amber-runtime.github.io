@@ -68,13 +68,13 @@ An agent is an LLM driven system that reasons about a task, takes actions, and a
 
 This autonomy is what makes agents suited to more open-ended tasks, in which the exact execution steps cannot be determined in advance. A request like "fix this bug" does not map easily to a predetermined sequence. Instead, an agent decides what actions to take, observes the results, and determines the next step as it works toward a solution.
 
-<img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
-
 Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once an LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long-running agents to resume safely without repeating completed work.
 
-<img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
+<img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
 This problem is already becoming relevant in practice. Coding agents like Cursor and ChatGPT Codex are already adopting durable execution runtimes or building systems with similar guarantees [[2]](https://cursor.com/blog/cloud-agent-lessons)[[9]](https://temporal.io/blog/improving-java-sdk-codex-openai).
+
+<img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
 <h3 class="sh" id="challenges-with-observability">Challenges with Observability</h3>
 
@@ -90,6 +90,6 @@ Traces matter most after a production failure, which is exactly when durable exe
 
 <img src="img/observability_problem.svg" alt="diagram showing resumed workflow's trace is missing the spans of the completed steps" style="width:100%">
 
-Developers investigating a failure may only see the newly executed portion of a resumed run, not the completed ones that led up to the failure.
+Developers investigating a failure may only see the newly executed portion of a resumed run, rather than the history leading up to the failure.
 
 Integrating observability with durable execution preserves an agent's progress and its visibility across failures.
