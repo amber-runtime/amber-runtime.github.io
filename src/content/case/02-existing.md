@@ -15,6 +15,8 @@ Choosing a durable execution platform requires weighing three key factors:
 
 The first two matter most to teams with privacy or compliance needs that require execution to stay inside their own systems; the third drives the ongoing cost of running it there.
 
+Three existing solutions we considered were DIY, Temporal, and Inngest.
+
 <h3 class="sh" id="diy">DIY</h3>
 
 DIY suits teams that want full control and accept the implementation burden that comes with it. Handling workflow durability yourself means building the underlying infrastructure from components like stateful job queues, database-backed state machines, and checkpointing logic.
@@ -41,7 +43,7 @@ While the source code for Inngest is available, and self-hosting Inngest is poss
 
 While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations that want to self-host for cost or compliance reasons do not have a simple solution that combines good developer experience and easy to manage infrastructure.
 
-<img src="img/existing-solutions.svg" alt="Existing solutions table">
+<img src="img/existing-solutions.svg" alt="Existing solutions table" style="width:70%">
 
 Amber is fully open source and self-hosted on Amazon Web Services (AWS).
 

@@ -27,7 +27,7 @@ We accepted this tradeoff because it aligned with Amber’s goal of being a ligh
 
 One challenge in Amber was collecting agent traces and mapping each span correctly to its durable step. While DBOS provides workflow data, it does not capture agent-specific data such as LLM calls, tool invocations, or agent handoffs. Since Amber focuses on long-running AI agents, developers need visibility into both.
 
-We first collected traces using an open-source observability platform, Arize Phoenix. The platform automatically captured traces using an instrumentation library, OpenInference, which was attractive. However, one problem was that the platform's data was not linked with DBOS’s data. As a result, resumed workflows were disconnected from the platform's observability data.
+We first collected traces using an open-source observability platform, Arize Phoenix, with minimal implementation. The platform automatically captured traces using an instrumentation library, OpenInference. However, one problem was that the platform's data was not linked with DBOS’s data. As a result, resumed workflows were disconnected from the platform's observability data.
 
 We dropped the platform but kept the instrumentation library to customize ourselves. While the library collected traces automatically, we stamped each span with its DBOS workflow ID. That tied every span to the step that produced it.
 
