@@ -28,7 +28,7 @@ For additional setup instructions and and SDK details see [the amber-sdk-README]
 
 Amber provides a dashboard for managing and debugging durable workflows. The dashboard allows for agent-specific tracing by using the OpenAI Agent SDK’s own TracingProcessor API.
 
-<div class="case-carousel" data-carousel aria-label="Amber dashboard walkthrough">
+<div class="case-carousel case-carousel--dashboard" data-carousel aria-label="Amber dashboard walkthrough">
   <div class="case-carousel__viewport">
     <button class="case-carousel__arrow case-carousel__arrow--prev" type="button" data-carousel-prev aria-label="Previous dashboard step">&#8249;</button>
     <div class="case-carousel__slides">

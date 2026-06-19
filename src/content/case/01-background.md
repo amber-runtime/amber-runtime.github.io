@@ -68,30 +68,28 @@ An agent is an LLM driven system that reasons about a task, takes actions, and a
 
 This autonomy is what makes agents suited to more open-ended tasks, in which the exact execution steps cannot be determined in advance. A request like "fix this bug" does not map easily to a predetermined sequence. Instead, an agent decides what actions to take, observes the results, and determines the next step as it works toward a solution.
 
-<img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
-
 Agent behavior may be nondeterministic, but its progress can still be preserved through durable steps. Once an LLM call completes, the durable execution engine stores the step’s result so it can be recovered after a failure instead of being re-executed. This allows long-running agents to resume safely without repeating completed work.
 
-<img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
+<img src="img/workflow-agent.svg" alt="Comparing workflow with workflows with agent" style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
 This problem is already becoming relevant in practice. Coding agents like Cursor and ChatGPT Codex are already adopting durable execution runtimes or building systems with similar guarantees [[2]](https://cursor.com/blog/cloud-agent-lessons)[[9]](https://temporal.io/blog/improving-java-sdk-codex-openai).
 
+<img src="img/openai_cursor.svg" alt="Openai and cursor logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
+
 <h3 class="sh" id="challenges-with-observability">Challenges with Observability</h3>
 
-Agent observability tools provide developers with visibility into agent behavior. They capture execution traces, model interactions, tool invocations, and token usage. This helps explain why an agent behaved a certain way.
+Agent observability tools provide developers with visibility into agent behavior. They record execution as traces, which are composed of spans representing individual operations such as LLM calls, tool invocations, or database writes.
 
 <img src="img/Traces.png" alt="Screenshot of traces in an observability platform" style="display:block;width:60%;height:auto;margin:1.5rem auto;">
 
-However, these systems are usually separate from the durable execution platforms.
+Durable execution platforms record those same operations differently. A workflow step preserves an operation's result to recover from failures, while a span captures the details of what happened.
 
-This separation becomes especially problematic during failure and recovery, when visibility matters most. When a durable workflow resumes after a crash, previously completed steps are skipped to preserve progress and avoid repeating work. As a result, when a trace resumes, it will be missing every span before the crash. This leaves the resumed traces incomplete. In other words, agent observability and durable execution frameworks are usually two separate record-keeping systems that are not linked.
+<img src="img/observability_durable.svg" alt="2 tables side by side listing observability vs durable execution record keeping" style="width:100%">
 
-<img src="img/observability_durable.svg" style="width:100%">
+Traces matter most after a production failure, which is exactly when durable execution and observability fall out of sync. During recovery, completed steps are restored instead of re-executed. Because spans are only emitted when code runs, restored steps produce no spans. As a result, the resumed run produces an incomplete trace, lacking the spans emitted before the failure.
 
-Thus, one main challenge is integrating both systems so agents can get both durability and observability.
+<img src="img/observability_problem.svg" alt="diagram showing resumed workflow's trace is missing the spans of the completed steps" style="width:100%">
 
-An important aspect of integrating observability is preserving the structural hierarchy of agent traces. For long-running, multi-agent workflows, determining which agents spawned a subagent or called a tool is critical to root-cause analysis and cost tracking.
+Developers investigating a failure may only see the newly executed portion of a resumed run, rather than the history leading up to the failure.
 
-<img src="img/hierarchy-loss.svg" alt="Visual of span hierarchy compared to linear hierachy of workflow" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
-
-In summary, durable execution is foundational to reliable long-running agents, and we begin the next section by comparing the existing durable execution platforms.
+Integrating observability with durable execution preserves an agent's progress and its visibility across failures.

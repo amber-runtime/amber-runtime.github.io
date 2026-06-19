@@ -139,6 +139,11 @@ img.deer{display:block;width:auto;flex:none}
   letter-spacing:.03em;color:var(--mute);margin:2px 2px 0}
 .cmp-foot b{color:var(--amber-lt);font-weight:600}
 .cmp-foot .dot{width:5px;height:5px;border-radius:50%;background:var(--amber)}
+/* signature: side-by-side (copy left, code right) only above 1180px; stacked below */
+@media(min-width:1181px){
+  #signature{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,5vw,72px);align-items:start}
+  #signature .cmp-code{margin:0}
+}
 
 /* ---------- feature beats ---------- */
 .beat{display:grid;grid-template-columns:1fr 1fr;gap:clamp(36px,5vw,80px);align-items:center;
@@ -156,6 +161,9 @@ img.deer{display:block;width:auto;flex:none}
 .beat-copy .keyline::before{content:"";width:18px;height:1px;background:var(--amber)}
 .beat.weight{grid-template-columns:1fr;gap:34px}
 .beat.weight .beat-visual{order:2}
+
+/* beat 2: asymmetric split — wide diagram gets the larger column */
+#beat-recover{grid-template-columns:1.5fr 1fr}
 
 /* visual cards */
 .card{border:1px solid var(--edge);border-radius:13px;background:#0c0c0e;overflow:hidden;
@@ -180,38 +188,6 @@ img.deer{display:block;width:auto;flex:none}
 .codecard .dec{color:var(--amber);font-weight:600}
 .codecard .dec-row{display:block;background:var(--amber-wash);box-shadow:inset 3px 0 0 var(--amber);
   margin:0 -22px;padding:2px 22px}
-
-/* beat 2: recovery animation slot */
-.recslot{position:relative;border:1px dashed var(--line);border-radius:13px;background:
-  repeating-linear-gradient(135deg,rgba(245,158,11,.035),rgba(245,158,11,.035) 11px,transparent 11px,transparent 22px),#0b0b0d;
-  padding:30px 30px 26px;min-height:300px;display:flex;flex-direction:column}
-.recslot .rtag{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:9px;margin:0 0 4px}
-.recslot .rtag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--amber)}
-.recslot .rsub{font-family:var(--mono);font-size:11.5px;color:var(--mute);margin:0 0 26px}
-.recrow{display:flex;align-items:center;gap:9px;margin:auto 0}
-.recstep{flex:1;height:54px;border-radius:7px;display:flex;align-items:center;justify-content:center;
-  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;position:relative}
-.recstep.done{border:1px solid rgba(16,185,129,.45);background:rgba(16,185,129,.1);color:var(--emerald-lt)}
-.recstep.kept{border:1px solid rgba(245,158,11,.5);background:rgba(245,158,11,.13);color:var(--amber-lt)}
-.recstep.resume{border:1px solid rgba(245,158,11,.6);background:rgba(245,158,11,.16);color:var(--amber-lt);
-  box-shadow:0 0 0 3px rgba(245,158,11,.13)}
-.recstep.todo{border:1px dashed var(--edge);background:rgba(255,255,255,.015);color:var(--faint)}
-.recstep.failed{border:1px solid rgba(239,68,68,.55);background:rgba(239,68,68,.12);color:var(--red-lt)}
-.recstep.next{border:1px solid rgba(100,116,139,.4);background:rgba(100,116,139,.1);color:var(--slate-lt)}
-.recstrike{width:2px;align-self:stretch;background:var(--red);position:relative;flex:none}
-.recstrike::after{content:"✕ crash";position:absolute;top:-22px;left:50%;transform:translateX(-50%);
-  white-space:nowrap;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.05em;
-  color:var(--red-lt);background:var(--ink);padding:2px 7px;border:1px solid rgba(239,68,68,.4);border-radius:4px}
-.reccap{font-family:var(--mono);font-size:11.5px;color:var(--body);margin:24px 0 0;line-height:1.6}
-.reccap b{color:var(--amber-lt);font-weight:600}
-.reclegend{display:flex;gap:18px;margin:14px 0 0;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
-.reclegend span{display:inline-flex;align-items:center;gap:7px}
-.reclegend .sw{width:11px;height:11px;border-radius:3px;display:inline-block;flex:none}
-.reclegend .sw.amb{background:rgba(245,158,11,.5);border:1px solid var(--amber)}
-.reclegend .sw.red{background:rgba(239,68,68,.4);border:1px solid var(--red)}
-.ph-tag{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:8px;padding:9px 16px;border-bottom:1px dashed var(--line);background:var(--amber-wash)}
-.ph-tag .d{width:6px;height:6px;border-radius:50%;background:var(--amber);flex:none}
 
 /* beat 3: dashboard inspector */
 .inspector{display:grid;grid-template-columns:1.15fr 1fr;min-height:340px}
@@ -250,6 +226,7 @@ img.deer{display:block;width:auto;flex:none}
   .beat{grid-template-columns:1fr;gap:30px;padding:52px 0}
   .beat.flip .beat-copy{order:1}
   .beat.flip .beat-visual{order:2}
+  #beat-recover{grid-template-columns:1fr}
   .inspector{grid-template-columns:1fr}
   .insp-pane.trace{border-right:0;border-bottom:1px solid var(--line-soft)}
 }
@@ -336,34 +313,13 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
 
 <!-- ===================== SIGNATURE MOMENT ===================== -->
 <section class="section shell" id="signature">
-  <p class="sec-eyebrow"><span class="n">01</span> The code</p>
-  <h2 class="sec-title">Crash recovery is a few lines.</h2>
-  <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. <code>@register_agent</code> and <code>@step</code> make it durable, and <code>agent_runner</code> runs it inside the workflow, so a crash mid-run resumes from the last completed step instead of starting over.</p>
+  <div class="sig-copy">
+    <p class="sec-eyebrow"><span class="n">01</span> The code</p>
+    <h2 class="sec-title">Crash recovery is a few lines.</h2>
+    <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. <code>@register_agent</code> and <code>@step</code> make it durable, and <code>agent_runner</code> runs it inside the workflow, so a crash mid-run resumes from the last completed step instead of starting over.</p>
+  </div>
 
-  <pre class="cmp-code"><span class="kw">from</span> agents <span class="kw">import</span> Agent, function_tool
-<span class="kw">from</span> amber <span class="kw">import</span> register_agent, agent_runner, step
-
-<span class="c"># wrap tools and external API calls with @step</span>
-<span class="dec">@function_tool</span>
-<span class="dec">@step</span>()
-<span class="kw">def</span> search_web(query: str) -> str:
-    ...
-
-<span class="c"># declare the agent with the openai-agents sdk</span>
-research_agent = Agent(
-    name=<span class="str">"research-assistant"</span>,
-    instructions=<span class="str">"..."</span>,
-    tools=[search_web],
-)
-
-<span class="c"># register the agent as a durable Amber workflow</span>
-<span class="dec">@register_agent</span>(name=<span class="str">"research-assistant"</span>)
-<span class="kw">async def</span> research(topic: str) -> str:
-    result = <span class="kw">await</span> agent_runner(
-        starting_agent=research_agent,
-        input=topic,
-    )
-    <span class="kw">return</span> str(result.final_output)</pre>
+  <img src="img/sdk-snippet.png" style="display:block;width:100%;height:auto;border-radius:14px">
 </section>
 
 <!-- ===================== FEATURE BEATS ===================== -->
@@ -372,23 +328,12 @@ research_agent = Agent(
   <!-- BEAT 2 -->
   <section class="beat flip" id="beat-recover">
     <div class="beat-copy">
-      <p class="sec-eyebrow"><span class="n">02</span> Recovery</p>
-      <h3 class="beat-h">Watch it recover from a crash.</h3>
-      <p>The process crashes mid-run. Finished steps are kept, not redone, and execution resumes from the last completed step as if nothing happened.</p>
+      <p class="sec-eyebrow"><span class="n">02</span> Durability</p>
+      <h3 class="beat-h">Resume from the last good step.</h3>
+      <p>Without durable execution, a crash discards every completed step and the agent restarts from the beginning. Amber saves each step as it finishes, so recovery re-runs only the step that failed.</p>
     </div>
     <div class="beat-visual">
-      <div class="recslot">
-        <p class="rtag">Durable execution animation</p>
-        <p class="rsub">built separately · static frame</p>
-        <div class="recrow">
-          <div class="recstep kept">search</div>
-          <div class="recstep kept">summarize</div>
-          <div class="recstrike"></div>
-          <div class="recstep failed">write</div>
-        </div>
-        <p class="reccap">Crash at <b>write</b>. <b>search</b> and <b>summarize</b> were already durable, so the run resumes at <b>write</b> instead of step one.</p>
-        <div class="reclegend"><span><i class="sw amb"></i>preserved</span><span><i class="sw red"></i>crashed step</span></div>
-      </div>
+      <img src="img/amber-hero-minimal.svg" alt="Without Amber an agent restarts from the beginning after a crash; with Amber it resumes from the last saved step." style="display:block;width:100%;height:auto;">
     </div>
   </section>
 
@@ -490,15 +435,4 @@ research_agent = Agent(
   <p>The full engineering case study: durable execution for agents, the observability gap, and how Amber closes it on DBOS and Postgres.</p>
   <a class="btn btn-primary" href="case.html">Read the Case Study <span class="arr">→</span></a>
 </section>
-
-<footer>
-  <div class="shell foot">
-    <span class="brand"><img class="deer" src="assets/brand-1.svg" alt="">Amber</span>
-    <span class="spacer"></span>
-    <a href="case.html">Case Study</a>
-    <a href="https://github.com/amber-runtime/amber" target="_blank" rel="noopener">GitHub</a>
-    <span>open source · self-hosted</span>
-  </div>
-</footer>
-
 </div>
