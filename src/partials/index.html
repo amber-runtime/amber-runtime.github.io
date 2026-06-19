@@ -82,9 +82,9 @@ img.deer{display:block;width:auto;flex:none}
 .hero{min-height:calc(100vh - 64px);display:grid;grid-template-columns:0.92fr 1.08fr;gap:clamp(40px,5vw,72px);
   align-items:center;padding:160px 0 88px}
 .hero-copy{min-width:0;display:flex;flex-direction:column;justify-content:center}
-.hero-deer-wrap{display:flex;align-items:center;justify-content:center}
+.hero-deer-wrap{display:flex;align-items:center;justify-content:center;padding-bottom:40px}
 .hero-deer{height:clamp(300px,38vw,520px);width:auto;display:block;
-  filter:drop-shadow(0 26px 80px rgba(245,158,11,.32))}
+  padding-bottom:48px;filter:drop-shadow(0 26px 80px rgba(245,158,11,.32))}
 .hero-wordmark{font-family:var(--display);font-weight:700;color:var(--amber);
   font-size:clamp(60px,9vw,128px);line-height:.92;letter-spacing:-.045em;margin:0}
 .hero-rule{width:clamp(180px,32%,300px);height:2px;border:0;margin:clamp(20px,2.4vw,30px) 0 clamp(22px,2.6vw,32px);
@@ -112,7 +112,8 @@ img.deer{display:block;width:auto;flex:none}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
 
 /* ---------- section frame ---------- */
-.section{padding:84px 0;position:relative}
+.section{padding-top:84px;padding-bottom:84px;position:relative}
+#signature{padding-top:0;padding-bottom:0}
 .sec-eyebrow{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.18em;
   text-transform:uppercase;color:var(--amber);margin:0 0 16px;display:flex;align-items:center;gap:11px}
 .sec-eyebrow .n{color:var(--faint);font-weight:500}
@@ -153,7 +154,7 @@ img.deer{display:block;width:auto;flex:none}
 .beat-copy .sec-eyebrow .lead{color:var(--amber)}
 .beat-copy .beat-h{font-family:var(--display);font-weight:600;color:var(--bone);
   font-size:clamp(26px,2.9vw,38px);line-height:1.1;letter-spacing:-.025em;margin:0 0 18px}
-.beat-copy p{font-size:17.5px;line-height:1.65;color:var(--body);margin:0 0 18px;max-width:48ch;text-wrap:pretty}
+.beat-copy p,.sig-copy p{font-size:17.5px;line-height:1.65;color:var(--body);margin:0 0 18px;max-width:48ch;text-wrap:pretty}
 .beat-copy p:last-child{margin-bottom:0}
 .beat-copy strong{color:var(--bone);font-weight:600}
 .beat-copy .keyline{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);
@@ -281,7 +282,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
   .hero{min-height:auto;padding:128px 0 64px;grid-template-columns:1fr;gap:36px}
   .hero-deer-wrap{order:-1;justify-content:flex-start}
   .hero-deer{height:clamp(220px,52vw,320px)}
-  .section{padding:60px 0}
+  .section{padding-top:60px;padding-bottom:60px}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -300,7 +301,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
   <div class="hero-copy">
   <h1 class="hero-wordmark">Amber</h1>
   <hr class="hero-rule">
-  <p class="subhead">Open source, self-hosted durable execution and observability for AI agents.</p>
+  <p class="subhead">A self-hosted runtime that lets agents resume work after failures and makes agent runs easier to debug.</p>
   <div class="cta-row">
     <a class="btn btn-primary" href="case.html">Read the Case Study <span class="arr">→</span></a>
     <a class="btn btn-secondary" href="https://github.com/amber-runtime/amber" target="_blank" rel="noopener">
@@ -315,8 +316,9 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
 <section class="section shell" id="signature">
   <div class="sig-copy">
     <p class="sec-eyebrow"><span class="n">01</span> The code</p>
-    <h2 class="sec-title">Crash recovery is a few lines.</h2>
-    <p class="sec-lede">Your agent is a standard OpenAI Agents SDK agent. <code>@register_agent</code> and <code>@step</code> make it durable, and <code>agent_runner</code> runs it inside the workflow, so a crash mid-run resumes from the last completed step instead of starting over.</p>
+    <h2 class="sec-title">Crash recovery is a few lines away.</h2>
+    <p class="sec-lede">Import, annotate, run.</p>
+    <p class="sec-lede">Turn agent code into workflows that resume after failures with a few decorators.</p>
   </div>
 
   <img src="img/sdk-snippet.png" style="display:block;width:100%;height:auto;border-radius:14px">
@@ -329,8 +331,8 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
   <section class="beat flip" id="beat-recover">
     <div class="beat-copy">
       <p class="sec-eyebrow"><span class="n">02</span> Durability</p>
-      <h3 class="beat-h">Resume from the last good step.</h3>
-      <p>Without durable execution, a crash discards every completed step and the agent restarts from the beginning. Amber saves each step as it finishes, so recovery re-runs only the step that failed.</p>
+      <h3 class="beat-h">Failures no longer erase progress.</h3>
+      <p>Amber preserves your agent’s work so it never starts over.</p>
     </div>
     <div class="beat-visual">
       <img src="img/amber-hero-minimal.svg" alt="Without Amber an agent restarts from the beginning after a crash; with Amber it resumes from the last saved step." style="display:block;width:100%;height:auto;">
@@ -341,13 +343,12 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
   <section class="beat weight" id="beat-dashboard">
     <div class="beat-copy" style="max-width:60ch">
       <p class="sec-eyebrow"><span class="n">03</span> Observability</p>
-      <h3 class="beat-h">The agent and the workflow, in one place.</h3>
-      <p>Existing tools see one half each: a tracer watches the agent, a durable engine watches the workflow. Amber puts both in one inspector, so one view covers the agent trace and the recovery state.</p>
+      <h3 class="beat-h">Agent-specific metadata is captured at each step.</h3>
+      <p>When something fails, inspect and debug workflows.</p>
     </div>
     <div class="beat-visual">
       <div class="card">
-        <img class="card-shot" src="assets/observability-inspector.png" alt="Amber dashboard inspector showing a recovered Research Assistant run">
-        <div class="insp-foot">The agent trace and the durable state for one run, including the retry that recovered it.</div>
+        <img class="card-shot" src="assets/observability-inspector-2.png" alt="Amber dashboard inspector showing a recovered Research Assistant run">
       </div>
     </div>
   </section>
@@ -430,9 +431,7 @@ footer{border-top:1px solid var(--line-soft);padding:34px 0 48px}
 
 <!-- ===================== CLOSER ===================== -->
 <section class="closer shell">
-  <img class="deer" src="assets/brand-1.svg" alt="Amber deer mark">
-  <h2>Read how we built it.</h2>
-  <p>The full engineering case study: durable execution for agents, the observability gap, and how Amber closes it on DBOS and Postgres.</p>
+  <h2>How we built it.</h2>
   <a class="btn btn-primary" href="case.html">Read the Case Study <span class="arr">→</span></a>
 </section>
 </div>
