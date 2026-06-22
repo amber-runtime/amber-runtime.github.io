@@ -80,7 +80,7 @@ This problem is already becoming relevant in practice. Coding agents like Cursor
 
 Agent observability tools provide developers with visibility into agent behavior. They record execution as traces, which are composed of spans representing individual operations such as LLM calls, tool invocations, or database writes.
 
-<img src="img/Traces.png" alt="Screenshot of traces in an observability platform" style="display:block;width:60%;height:auto;margin:1.5rem auto;">
+<img src="img/Traces.png" alt="Screenshot of traces in an observability platform" style="display:block;width:min(60%, 384px);height:auto;margin:1.5rem auto;">
 
 Durable execution platforms record those same operations differently. A workflow step preserves an operation's result to recover from failures, while a span captures the details of what happened.
 

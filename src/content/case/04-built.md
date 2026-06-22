@@ -68,7 +68,7 @@ CloudFront routes traffic by path:
 
 The dashboard frontend loads in the browser and then uses Cognito sign in before requesting workflow data from the dashboard API.
 
-<img src="img/cloudfront-routes.svg" alt="Diagram showing the routes that user requests can take through Cloudfront" style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open CloudFront routes diagram">
+<img src="img/cloudfront.svg" alt="Diagram showing the routes that user requests can take through Cloudfront" style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open CloudFront routes diagram">
 
 <h4 class="ssh" id="ecs-fargate-and-rds">ECS Fargate and RDS</h4>
 
@@ -102,4 +102,4 @@ List of supporting AWS services:
 
 <h4 class="ssh" id="full-aws-diagram-of-amber">Full AWS Diagram of Amber</h4>
 
-<img src="img/full-architecture.svg" alt="Diagram showing the full detailed Amber AWS architecture with all of its components." style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open full AWS architecture diagram">
+<img src="img/full-aws.svg" alt="Diagram showing the full detailed Amber AWS architecture with all of its components." style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open full AWS architecture diagram">

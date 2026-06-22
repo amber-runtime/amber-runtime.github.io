@@ -19,7 +19,7 @@ In future releases, Amber will support workflow versioning. Older workflows will
 
 Amber currently provides limited controls for how agents retrieve workflow information through the CLI. While agents can query workflows via the CLI command `workflows`, agents will not always adhere to using that path when trying to get workflow information. In some cases, this can result in agents attempting to directly access your database to retrieve workflow data.
 
-In the future, Amber will introduce dedicated skill files to better constrain agent behavior and guide agents toward approved methods to retrieve workflow data. This will improve the user experience and reduce the risk of unintended actions by agents when retrieving workflow information.
+In the future, Amber will introduce dedicated skill files to better constrain agent behavior and guide agents toward approved methods to retrieve workflow data. Amber will also expose workflow information through an MCP server, giving agents a standardized interface for querying workflow state and metadata. Together, these additions will improve the user experience and reduce the risk of unintended actions when agents retrieve workflow information.
 
 
 <h3 class="sh" id="support-for-other-agent-frameworks">Support for Other Agent Frameworks</h3>
