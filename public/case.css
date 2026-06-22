@@ -293,13 +293,13 @@ h1 .grad{
   cursor:zoom-in;transition:transform .18s ease,filter .18s ease}
 .case-carousel__frame img:hover{transform:scale(1.012);filter:brightness(1.06)}
 .case-carousel.case-carousel--dashboard{width:100%;max-width:760px}
-.case-carousel--dashboard .case-carousel__viewport{padding:18px 18px 16px}
+.case-carousel--dashboard .case-carousel__viewport{padding:18px 64px 14px}
 .case-carousel--dashboard .case-carousel__frame img{object-fit:contain}
 .case-carousel.case-carousel--cli{width:100%;max-width:760px}
-.case-carousel--cli .case-carousel__viewport{padding:18px 18px 16px}
+.case-carousel--cli .case-carousel__viewport{padding:18px 64px 14px}
 .case-carousel--cli .case-carousel__frame{aspect-ratio:3.6/1}
 .case-carousel--cli .case-carousel__frame img{object-fit:contain}
-.case-carousel__slide figcaption{margin:20px 44px 0;font-size:16px;line-height:1.5;color:var(--body)}
+.case-carousel__slide figcaption{margin:18px 36px 0;font-size:16px;line-height:1.5;color:var(--body)}
 .case-carousel__arrow{position:absolute;top:50%;z-index:5;display:grid;place-items:center;width:48px;height:48px;
   border:1px solid var(--line);border-radius:50%;background:rgba(9,9,11,.92);color:var(--amber-lt);
   box-shadow:0 8px 26px rgba(0,0,0,.28);
@@ -324,12 +324,13 @@ h1 .grad{
   .case-carousel{width:100%}
   .case-carousel.case-carousel--dashboard,
   .case-carousel.case-carousel--cli{width:100%;max-width:100%}
-  .case-carousel__viewport{padding:20px 16px 16px;border-radius:12px}
+  .case-carousel__viewport{padding:20px 48px 14px;border-radius:12px}
   .case-carousel--dashboard .case-carousel__viewport,
-  .case-carousel--cli .case-carousel__viewport{padding:20px 16px 16px}
+  .case-carousel--cli .case-carousel__viewport{padding:20px 48px 14px}
   .case-carousel__slide h4{font-size:20px;margin-bottom:14px}
-  .case-carousel__frame{aspect-ratio:4/3}
-  .case-carousel__slide figcaption{margin:16px 36px 0;font-size:14.5px}
+  .case-carousel--dashboard .case-carousel__frame{aspect-ratio:4/3}
+  .case-carousel--cli .case-carousel__frame{aspect-ratio:3.6/1}
+  .case-carousel__slide figcaption{margin:14px 30px 0;font-size:14.5px}
   .case-carousel__arrow{width:40px;height:40px;font-size:28px}
   .case-carousel__arrow--prev{left:10px}
   .case-carousel__arrow--next{right:10px}

@@ -56,7 +56,10 @@
     var dots=[].slice.call(carousel.querySelectorAll('[data-carousel-dot]'));
     var prev=carousel.querySelector('[data-carousel-prev]');
     var next=carousel.querySelector('[data-carousel-next]');
+    var slidesWrap=carousel.querySelector('.case-carousel__slides');
     var cur=0;
+    var measureRaf=0;
+    var resizeTimer=0;
 
     if(!slides.length) return;
 
@@ -74,6 +77,44 @@
       });
     }
 
+    function measureTallestSlide(){
+      if(!slidesWrap) return;
+      var width=slidesWrap.clientWidth;
+      if(!width) return;
+
+      var probe=document.createElement('div');
+      probe.style.position='absolute';
+      probe.style.left='-10000px';
+      probe.style.top='0';
+      probe.style.visibility='hidden';
+      probe.style.pointerEvents='none';
+      probe.style.width=width+'px';
+      probe.style.boxSizing='border-box';
+      carousel.appendChild(probe);
+
+      var tallest=0;
+      slides.forEach(function(slide){
+        var clone=slide.cloneNode(true);
+        clone.style.display='block';
+        clone.style.margin='0';
+        probe.appendChild(clone);
+        tallest=Math.max(tallest, clone.offsetHeight);
+      });
+
+      probe.remove();
+      slidesWrap.style.minHeight=tallest+'px';
+    }
+
+    function scheduleMeasure(){
+      window.cancelAnimationFrame(measureRaf);
+      measureRaf=window.requestAnimationFrame(measureTallestSlide);
+    }
+
+    function scheduleResizeMeasure(){
+      window.clearTimeout(resizeTimer);
+      resizeTimer=window.setTimeout(scheduleMeasure, 80);
+    }
+
     if(prev) prev.addEventListener('click',function(){ show(cur-1); });
     if(next) next.addEventListener('click',function(){ show(cur+1); });
     dots.forEach(function(dot,idx){
@@ -81,6 +122,12 @@
     });
 
     show(0);
+    scheduleMeasure();
+    window.addEventListener('resize',scheduleResizeMeasure,{passive:true});
+    window.addEventListener('load',scheduleMeasure,{once:true});
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(scheduleMeasure);
+    }
   });
 })();
 
