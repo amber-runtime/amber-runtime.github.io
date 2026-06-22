@@ -10,7 +10,7 @@ title: "How we built Amber"
 
 To better understand how we built and deployed Amber, let's look at a high level overview of the components.
 
-<img src="img/aws-highlevel.svg" alt="High level look of Amber components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="/img/aws-highlevel.svg" alt="High level look of Amber components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Amber's architecture is composed of the following layers:
 <ol class="bl">
@@ -23,7 +23,7 @@ The first component we will discuss is the durable execution engine itself, whic
 
 <h3 class="sh" id="durable-execution-engine">Durable Execution Engine</h3>
 
-<img src="img/DBOS.svg" alt="DBOS logo" style="display:block;width:200px;height:150px;object-fit:contain;margin:0 0 .5rem 0;">
+<img src="/img/DBOS.svg" alt="DBOS logo" style="display:block;width:200px;height:150px;object-fit:contain;margin:0 0 .5rem 0;">
 
 Early in Amber’s design, we debated whether to build our own durable execution system or adopt an existing solution.
 
@@ -31,7 +31,7 @@ We ended up selecting DBOS because it aligned with Amber’s goal of keeping the
 
 Workflow state, queueing, and observability data could all live in one place. This simplified Amber’s architecture and reduced the infrastructure developers needed to manage.
 
-<img src="img/enqueue-workflow.svg" alt="Diagram of agents writing to a queue on postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="/img/enqueue-workflow.svg" alt="Diagram of agents writing to a queue on postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 <h3 class="sh" id="worker-runtime">Worker Runtime</h3>
 
@@ -41,7 +41,7 @@ As a result, Amber separates request handling from long-running agent execution.
 
 This separation allows the application service and worker runtime to scale independently based on their own traffic patterns.
 
-<img src="img/dequeue-workflow.svg" alt="Diagram of workers dequeueing from postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="/img/dequeue-workflow.svg" alt="Diagram of workers dequeueing from postgres instance." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 At this point, Amber could define durable agent workflows and execute them reliably. The next challenge was deployment. Since Amber is self-hosted, developers needed a way to run these components inside their own AWS account.
 
@@ -49,7 +49,7 @@ To make the AWS architecture easier to understand, we break it down into its maj
 
 <h3 class="sh" id="self-hosted-aws-deployment">Self-hosted AWS Deployment</h3>
 
-<img src="img/aws_logo.png" alt="aws logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
+<img src="/img/aws_logo.png" alt="aws logo" style="display:block;width:200px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
 To simplify deployment, we built the Amber CLI to provision the required infrastructure and deploy the application runtime in a couple of commands.
 
@@ -68,7 +68,7 @@ CloudFront routes traffic by path:
 
 The dashboard frontend loads in the browser and then uses Cognito sign in before requesting workflow data from the dashboard API.
 
-<img src="img/cloudfront.svg" alt="Diagram showing the routes that user requests can take through Cloudfront" style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open CloudFront routes diagram">
+<img src="/img/cloudfront.svg" alt="Diagram showing the routes that user requests can take through Cloudfront" style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open CloudFront routes diagram">
 
 <h4 class="ssh" id="ecs-fargate-and-rds">ECS Fargate and RDS</h4>
 
@@ -82,7 +82,7 @@ Amber deploys three main ECS Fargate services, which are containerized applicati
 
 All three services connect through RDS Proxy to RDS Postgres, a managed PostgreSQL database. Postgres stores the durable workflow state, queue state, step history, and agent event data used by Amber.
 
-<img src="img/compute-data-layer.svg" alt="Diagram showing the agent, worker, and dashboard backend and how they communicate with the data layer" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="/img/compute-data-layer.svg" alt="Diagram showing the agent, worker, and dashboard backend and how they communicate with the data layer" style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 <h4 class="ssh" id="supporting-aws-services">Supporting AWS Services</h4>
 
@@ -98,8 +98,8 @@ List of supporting AWS services:
 </ol>
 
 
-<img src="img/supporting-services.svg" alt="Diagram showing the services that support the AWS infrastructure: ECR, Parameter Store, Secrets Manager, S3 Bucket, Cognito, and Cloudwatch." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="/img/supporting-services.svg" alt="Diagram showing the services that support the AWS infrastructure: ECR, Parameter Store, Secrets Manager, S3 Bucket, Cognito, and Cloudwatch." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 <h4 class="ssh" id="full-aws-diagram-of-amber">Full AWS Diagram of Amber</h4>
 
-<img src="img/full-aws.svg" alt="Diagram showing the full detailed Amber AWS architecture with all of its components." style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open full AWS architecture diagram">
+<img src="/img/full-aws.svg" alt="Diagram showing the full detailed Amber AWS architecture with all of its components." style="display:block;width:100%;height:auto;margin:1.5rem auto;" data-lightbox-image tabindex="0" role="button" aria-label="Open full AWS architecture diagram">

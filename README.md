@@ -6,7 +6,7 @@ The Amber case study site, built with Astro and deployed to GitHub Pages.
 
 ```
 npm install
-npm run dev        # http://localhost:4321/case-study/
+npm run dev        # http://localhost:4321/
 npm run build      # static output in dist/
 npm run preview    # serve the built output
 ```
@@ -19,7 +19,7 @@ npm run preview    # serve the built output
 - `src/partials/case-prefix.html`, `case-suffix.html` — the writeup frame: header, contents rail, intro, footer.
 - `src/layouts/Base.astro` — shared `<head>` and page shell.
 - `public/` — static assets served as-is: fonts and brand marks in `assets/`, diagrams in `img/`, stylesheets `global.css` and `case.css`.
-- `astro.config.mjs` — `base` is `/case-study/` (must match the repo name); `build.format: 'file'` keeps URLs at `index.html` and `case.html`.
+- `astro.config.mjs` — `base` is `/`; `build.format: 'directory'` plus `trailingSlash: 'never'` keeps the live routes at `/`, `/case`, and `/team`.
 
 ## Editing the writeup
 
@@ -41,4 +41,4 @@ Body paragraphs are plain markdown. Accent words, the code block, diagrams, capt
 
 ## Deploy
 
-Pushes to `main` build and deploy to GitHub Pages via `.github/workflows/deploy.yml`. This requires the repo's Pages source to be set to GitHub Actions (Settings, Pages, Source). The site serves at `/case-study/`.
+Pushes to `main` build and deploy to GitHub Pages via `.github/workflows/deploy.yml`. This requires the repo's Pages source to be set to GitHub Actions (Settings, Pages, Source). The site serves at `/`.

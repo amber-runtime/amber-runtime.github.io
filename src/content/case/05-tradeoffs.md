@@ -7,7 +7,7 @@ screenLabel: "Engineering Tradeoffs and Challenges"
 title: "Engineering Tradeoffs and Challenges"
 ---
 <h3 class="sh" id="tradeoffs-durable-execution-engine">Durable Execution Engine</h3>
-<img src="img/DBOS_vs_Lambda.svg" alt="Image of dbos vs aws lambda." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
+<img src="/img/DBOS_vs_Lambda.svg" alt="Image of dbos vs aws lambda." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
 The two main options we considered were AWS Durable Lambdas and DBOS Transact. Since Amber’s infrastructure already relied on AWS services, AWS Durable Lambdas seemed like a natural fit. Durable Lambdas support long-running workflows without the 15 minute limit of standard AWS Lambda functions, which made them an attractive option.
 
@@ -23,7 +23,7 @@ We accepted this tradeoff because it aligned with Amber’s goal of being a ligh
 
 <h3 class="sh" id="agent-tracing-and-observability">Agent Tracing and Observability</h3>
 
-<img src="img/phoenix.svg" alt="Image of Phoenix vs OpenAI TracingProcessor API." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
+<img src="/img/phoenix.svg" alt="Image of Phoenix vs OpenAI TracingProcessor API." style="display:block;width:75%;height:auto;margin:1.5rem auto;">
 
 One challenge in Amber was collecting agent traces and mapping each span correctly to its durable step. While DBOS provides workflow data, it does not capture agent-specific data such as LLM calls, tool invocations, or agent handoffs. Since Amber focuses on long-running AI agents, developers need visibility into both.
 
@@ -38,7 +38,7 @@ The library stored traces in a nested tree that captured which agent made each t
 The main tradeoff is that Amber’s tracing is more tightly coupled to the OpenAI Agents SDK, making support for other frameworks more limited. We accepted this tradeoff because it simplified our codebase, removed an unnecessary dependency, and provided cleaner agent-specific observability within Amber’s dashboard.
 
 <h3 class="sh" id="embedded-sdk-architecture-vs-separate-runtime-server">Embedded SDK Architecture vs Separate Runtime Server</h3>
-<img src="img/embedded_sdk.svg" alt="The embedded SDK avoids the extra network hop of a separate runtime server." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
+<img src="/img/embedded_sdk.svg" alt="The embedded SDK avoids the extra network hop of a separate runtime server." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Our initial product decision was to have the developers host their agents on a runtime server that Amber would provide. The goal was to abstract away the durable execution runtime and manage it on the developer's behalf. However, this would require them to shape their application around our runtime, which created unnecessary friction.
 
@@ -53,4 +53,3 @@ We then simplified the SDK and made it easier for the developer to embed into th
 One tradeoff of the embedded SDK approach is that the developer's application becomes tightly coupled to the durable execution runtime. If the developer’s application goes down, workflow execution pauses until it becomes available again.
 
 We accepted this tradeoff because developers no longer need to provision and manage a separate runtime server.
-

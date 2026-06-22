@@ -23,7 +23,7 @@ DIY suits teams that want full control and accept the implementation burden that
 
 As these systems grow, that infrastructure code becomes increasingly difficult to maintain, test, and keep reliable. They often require more effort to reach the same level of resilience as a purpose‑built platform, and may miss edge cases that dedicated systems already handle.
 
-<img src="img/Temporal_logo.png" alt="Temporal durable execution logo" style="display:block;width:100px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
+<img src="/img/Temporal_logo.png" alt="Temporal durable execution logo" style="display:block;width:100px;height:100px;object-fit:contain;margin:0 0 .5rem 0;">
 
 <h3 class="sh" id="temporal" style="margin-top:0;">Temporal</h3>
 
@@ -33,7 +33,7 @@ Comparatively, Temporal demands the most significant restructuring of the codeba
 
 Additionally, running Temporal requires operating a cluster of services, which can be a significant burden for a smaller team to self-host and maintain.
 
-<img src="img/inngest_inc_logo.png" alt="Inngest logo" style="display:inline-block;width:100px;height:100px;object-fit:contain;vertical-align:middle;margin:0 .5rem 0 0;">
+<img src="/img/inngest_inc_logo.png" alt="Inngest logo" style="display:inline-block;width:100px;height:100px;object-fit:contain;vertical-align:middle;margin:0 .5rem 0 0;">
 
 <h3 class="sh" id="inngest" style="margin-top:0;">Inngest</h3>
 
@@ -43,7 +43,7 @@ While the source code for Inngest is available, and self-hosting Inngest is poss
 
 While the market for durable execution has several strong solutions, these existing solutions leave a gap in the market. Smaller organizations that want to self-host for cost or compliance reasons do not have a simple solution that combines good developer experience and easy to manage infrastructure.
 
-<img src="img/existing-solutions.svg" alt="Existing solutions table" style="width:70%">
+<img src="/img/existing-solutions.svg" alt="Existing solutions table" style="width:70%">
 
 Amber is fully open source and self-hosted on Amazon Web Services (AWS).
 
