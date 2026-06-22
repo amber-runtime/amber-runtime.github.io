@@ -8,18 +8,18 @@ title: "How we built Amber"
 ---
 <h3 class="sh" id="high-level-architecture">High-Level Architecture</h3>
 
-To better understand how we built and deploy Amber, let's look at a high level overview of the components.
+To better understand how we built and deployed Amber, let's look at a high level overview of the components.
 
 <img src="img/aws-highlevel.svg" alt="High level look of Amber components." style="display:block;width:100%;height:auto;margin:1.5rem auto;">
 
 Amber's architecture is composed of the following layers:
 <ol class="bl">
 <li>Web layer, which routes traffic and hosts the Dashboard frontend and any optional Agent frontends.</li>
-<li>Application layer, which hosts the Agents built with our SDK. In addition to hosting the Agents, this layer is also home to the Dashboard backend and worker pool.</li>
-<li>Data layer, where Agent execution steps are queued and the results stored.</li>
+<li>Server layer, which hosts the Agents built with our SDK. In addition to hosting the Agents, this layer is also home to the Dashboard backend and worker pool.</li>
+<li>Database layer, where Agent execution steps are queued and the results stored.</li>
 </ol>
 
-The first component we will discuss is the durable execution engine itself, which is part of the application layer.
+The first component we will discuss is the durable execution engine itself, which is part of the server layer.
 
 <h3 class="sh" id="durable-execution-engine">Durable Execution Engine</h3>
 
